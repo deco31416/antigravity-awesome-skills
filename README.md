@@ -39,6 +39,7 @@ This repository provides essential skills to transform your AI assistant into a 
 - [⚖️ License](#license)
 - [👥 Repo Contributors](#repo-contributors)
 - [🌟 Star History](#star-history)
+- [Ruleskill](https://ruleskill.com) - We want to verify your code for the RuleSkill Protocol. Claim your badge.
 
 ---
 
