@@ -110,11 +110,12 @@ These skills follow the universal **SKILL.md** format and work with any AI codin
 | **Antigravity** | IDE  | `(Agent Mode) Use skill...`       | `.agent/skills/`  |
 | **Cursor**      | IDE  | `@skill-name (in Chat)`           | `.cursor/skills/` |
 | **Copilot**     | Ext  | `(Paste content manually)`        | N/A               |
-| **OpenCode**    | CLI  | `opencode run @skill-name`        | `.agent/skills/`  |
+| **OpenCode**    | CLI  | `opencode run @skill-name`        | `.agents/skills/`  |
 | **AdaL CLI**    | CLI  | `(Auto) Skills load on-demand`    | `.adal/skills/`   |
 
 > [!TIP]
 > **Universal Path**: We recommend cloning to `.agent/skills/`. Most modern tools (Antigravity, recent CLIs) look here by default.
+> **OpenCode Path Update**: opencode path is changed to `.agents/skills` for global skills. See [Place Files](https://opencode.ai/docs/skills/#place-files) directive on OpenCode Docs.
 
 > [!WARNING]
 > **Windows Users**: this repository uses **symlinks** for official skills.
@@ -144,8 +145,8 @@ npx antigravity-awesome-skills --gemini
 # Codex CLI
 npx antigravity-awesome-skills --codex
 
-# OpenCode (Universal)
-npx antigravity-awesome-skills
+# OpenCode
+npx antigravity-awesome-skills --path .agents/skills
 
 # Custom path
 npx antigravity-awesome-skills --path ./my-skills
@@ -171,8 +172,8 @@ git clone https://github.com/sickn33/antigravity-awesome-skills.git .codex/skill
 # Cursor specific
 git clone https://github.com/sickn33/antigravity-awesome-skills.git .cursor/skills
 
-# OpenCode specific (Universal path)
-git clone https://github.com/sickn33/antigravity-awesome-skills.git .agent/skills
+# OpenCode
+git clone https://github.com/sickn33/antigravity-awesome-skills.git .agents/skills
 ```
 
 ---
