@@ -33,3 +33,10 @@ validation-baseline.json
 ChatGPT_Context/
 ChatGPT_Context.zip
 
+
+# Local Netlify folder
+.netlify
+
+# Secrets
+.env
+.env.*

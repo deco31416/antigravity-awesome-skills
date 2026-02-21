@@ -29,18 +29,21 @@ npm install -g netlify-cli
 netlify --version
 ```
 
-### Local Dev
+## API Access
+- Apply via SoundCloud help article ("Otto" chatbot) to request API access + credentials.
+- Use local `.env` for dev; **do not commit secrets**.
+- Netlify Dev reads `.env` locally and can pull Netlify env vars (when not offline).
+
+### Local dev modes
 ```powershell
 cd "c:\Users\sean\antigravity-awesome-skills\prototypes\residency-plus"
 
-# Option A: Set env var inline + run offline
+# Offline mode (won't pull Netlify env vars)
 $env:SOUNDCLOUD_CLIENT_ID="YOUR_CLIENT_ID"
 netlify dev --offline --dir "." --functions "netlify/functions" --port 8888
 
-# Option B: Use .env file (gitignored)
-# Create prototypes/residency-plus/.env with:
-#   SOUNDCLOUD_CLIENT_ID=<your-client-id>
-netlify dev --offline --dir "." --functions "netlify/functions" --port 8888
+# Online mode (can pull Netlify env vars / read from .env file)
+netlify dev --dir "." --functions "netlify/functions" --port 8888
 ```
 
 - **PowerShell note:** `curl` is an alias for `Invoke-WebRequest`; use `curl.exe -i` to see correct headers and non-2xx response bodies.
