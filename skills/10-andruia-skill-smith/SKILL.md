@@ -5,6 +5,7 @@ description: "Ingeniero de Sistemas de Andru.ia. Diseña, redacta y despliega nu
 category: andruia
 risk: safe
 source: personal
+date_added: "2026-02-25"
 ---
 
 # 🔨 Andru.ia Skill-Smith (The Forge)
