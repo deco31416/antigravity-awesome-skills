@@ -10,6 +10,16 @@
     "date_added": "2026-02-27"
   },
   {
+    "id": "10-andruia-skill-smith",
+    "path": "skills/10-andruia-skill-smith",
+    "category": "andruia",
+    "name": "10-andruia-skill-smith",
+    "description": "Ingeniero de Sistemas de Andru.ia. Dise\u00f1a, redacta y despliega nuevas habilidades (skills) dentro del repositorio siguiendo el Est\u00e1ndar de Diamante.",
+    "risk": "safe",
+    "source": "personal",
+    "date_added": null
+  },
+  {
     "id": "20-andruia-niche-intelligence",
     "path": "skills/20-andruia-niche-intelligence",
     "category": "andruia",
