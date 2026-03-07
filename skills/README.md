@@ -170,10 +170,10 @@ description: "What this skill does"
 
 ## Documentation
 
-- **[Getting Started](../GETTING_STARTED.md)** - Quick start guide
-- **[Examples](../docs/EXAMPLES.md)** - Real-world usage examples
-- **[FAQ](../FAQ.md)** - Common questions
-- **[Visual Guide](../docs/VISUAL_GUIDE.md)** - Diagrams and flowcharts
+- **[Getting Started](../docs/users/getting-started.md)** - Quick start guide
+- **[Examples](../docs/contributors/examples.md)** - Real-world usage examples
+- **[FAQ](../docs/users/faq.md)** - Common questions
+- **[Visual Guide](../docs/users/visual-guide.md)** - Diagrams and flowcharts
 
 ---
 
@@ -198,4 +198,4 @@ Found a skill that needs improvement? Want to add a new skill?
 
 ---
 
-**Need help?** Check the [FAQ](../FAQ.md) or open an issue on GitHub!
+**Need help?** Check the [FAQ](../docs/FAQ.md) or open an issue on GitHub!
