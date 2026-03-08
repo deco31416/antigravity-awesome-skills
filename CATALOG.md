@@ -2,7 +2,7 @@
 
 Generated at: 2026-02-08T00:00:00.000Z
 
-Total skills: 1272
+Total skills: 1273
 
 ## architecture (79)
 
@@ -408,7 +408,7 @@ Scope::with_data, save state, load state, serde,
 | `yann-lecun` | Agente que simula Yann LeCun — inventor das Convolutional Neural Networks, Chief AI Scientist da Meta, Prêmio Turing 2018. Use quando quiser: perspectivas so... | persona, cnn, meta, ai-safety-critic, open-source | persona, cnn, meta, ai-safety-critic, open-source, yann, lecun, agente, que, simula, inventor, das |
 | `youtube-automation` | Automate YouTube tasks via Rube MCP (Composio): upload videos, manage playlists, search content, get analytics, and handle comments. Always search tools firs... | youtube | youtube, automation, automate, tasks, via, rube, mcp, composio, upload, videos, playlists, search |
 
-## development (175)
+## development (176)
 
 | Skill | Description | Tags | Triggers |
 | --- | --- | --- | --- |
@@ -546,6 +546,7 @@ no matching field, parse error, widget... | makepad, reference | makepad, refere
 | `odoo-rpc-api` | Expert on Odoo's external JSON-RPC and XML-RPC APIs. Covers authentication, model calls, record CRUD, and real-world integration examples in Python, JavaScri... | odoo, rpc, api | odoo, rpc, api, external, json, xml, apis, covers, authentication, model, calls, record |
 | `odoo-shopify-integration` | Connect Odoo with Shopify: sync products, inventory, orders, and customers using the Shopify API and Odoo's external API or connector modules. | odoo, shopify, integration | odoo, shopify, integration, connect, sync, products, inventory, orders, customers, api, external, connector |
 | `odoo-woocommerce-bridge` | Sync Odoo with WooCommerce: products, inventory, orders, and customers via WooCommerce REST API and Odoo external API. | odoo, woocommerce, bridge | odoo, woocommerce, bridge, sync, products, inventory, orders, customers, via, rest, api, external |
+| `pakistan-payments-stack` | Design and implement Pakistani payment gateways (JazzCash, Easypaisa, local banks) in production SaaS stacks with robust PKR billing, webhooks, and reconcili... | saas, payments, pakistan, nextjs, b2b | saas, payments, pakistan, nextjs, b2b, stack, pakistani, payment, gateways, jazzcash, easypaisa, local |
 | `product-manager-toolkit` | Comprehensive toolkit for product managers including RICE prioritization, customer interview analysis, PRD templates, discovery frameworks, and go-to-market ... | product, manager | product, manager, toolkit, managers, including, rice, prioritization, customer, interview, analysis, prd, discovery |
 | `python-development-python-scaffold` | You are a Python project architecture expert specializing in scaffolding production-ready Python applications. Generate complete project structures with mode... | python | python, development, scaffold, architecture, specializing, scaffolding, applications, generate, complete, structures, tooling, uv |
 | `python-fastapi-development` | Python FastAPI backend development with async patterns, SQLAlchemy, Pydantic, authentication, and production API patterns. | python, fastapi | python, fastapi, development, backend, async, sqlalchemy, pydantic, authentication, api |
@@ -1080,7 +1081,7 @@ distri... | makepad, deployment | makepad, deployment, critical, packaging, trig
 | `workflow-automation` | Workflow automation is the infrastructure that makes AI agents reliable. Without durable execution, a network hiccup during a 10-step payment flow means lost... |  | automation, infrastructure, makes, ai, agents, reliable, without, durable, execution, network, hiccup, during |
 | `x-twitter-scraper` | X (Twitter) data platform skill — tweet search, user lookup, follower extraction, engagement metrics, giveaway draws, monitoring, webhooks, 19 extraction too... | [twitter, x-api, scraping, mcp, social-media, data-extraction, giveaway, monitoring, webhooks] | [twitter, x-api, scraping, mcp, social-media, data-extraction, giveaway, monitoring, webhooks], twitter, scraper, data |
 
-## security (148)
+## security (149)
 
 | Skill | Description | Tags | Triggers |
 | --- | --- | --- | --- |
@@ -1096,6 +1097,7 @@ distri... | makepad, deployment | makepad, deployment, critical, packaging, trig
 | `api-security-testing` | API security testing workflow for REST and GraphQL APIs covering authentication, authorization, rate limiting, input validation, and security best practices. | api, security | api, security, testing, rest, graphql, apis, covering, authentication, authorization, rate, limiting, input |
 | `attack-tree-construction` | Build comprehensive attack trees to visualize threat paths. Use when mapping attack scenarios, identifying defense gaps, or communicating security risks to s... | attack, tree, construction | attack, tree, construction, trees, visualize, threat, paths, mapping, scenarios, identifying, defense, gaps |
 | `audit-context-building` | Enables ultra-granular, line-by-line code analysis to build deep architectural context before vulnerability or bug finding. | audit, building | audit, building, context, enables, ultra, granular, line, code, analysis, deep, architectural, before |
+| `audit-skills` | Expert security auditor for AI Skills and Bundles. Performs non-intrusive static analysis to identify malicious patterns, data leaks, system stability risks,... | security, audit, skills, bundles, cross-platform | security, audit, skills, bundles, cross-platform, auditor, ai, performs, non, intrusive, static, analysis |
 | `auth-implementation-patterns` | Master authentication and authorization patterns including JWT, OAuth2, session management, and RBAC to build secure, scalable access control systems. Use wh... | auth | auth, authentication, authorization, including, jwt, oauth2, session, rbac, secure, scalable, access, control |
 | `aws-penetration-testing` | This skill should be used when the user asks to "pentest AWS", "test AWS security", "enumerate IAM", "exploit cloud infrastructure", "AWS privilege escalatio... | aws, penetration | aws, penetration, testing, skill, should, used, user, asks, pentest, test, security, enumerate |
 | `azure-cosmos-db-py` | Build Azure Cosmos DB NoSQL services with Python/FastAPI following production-grade patterns. Use when implementing database client setup with dual auth (Def... | azure, cosmos, db, py | azure, cosmos, db, py, nosql, python, fastapi, following, grade, implementing, database, client |
