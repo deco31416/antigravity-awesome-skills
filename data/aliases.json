@@ -93,7 +93,6 @@
     "llm-application-optimize": "llm-application-dev-prompt-optimize",
     "machine-learning-pipeline": "machine-learning-ops-ml-pipeline",
     "microsoft-azure-dotnet": "microsoft-azure-webjobs-extensions-authentication-events-dotnet",
-    "monte-carlo-detection": "monte-carlo-vulnerability-detection",
     "moodle-external-development": "moodle-external-api-development",
     "multi-platform-apps": "multi-platform-apps-multi-platform",
     "observability-monitoring-setup": "observability-monitoring-monitor-setup",

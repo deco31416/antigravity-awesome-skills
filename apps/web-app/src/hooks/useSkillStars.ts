@@ -65,7 +65,7 @@ export function useSkillStars(skillId: string | undefined): UseSkillStarsReturn 
             .from('skill_stars')
             .select('star_count')
             .eq('skill_id', skillId)
-            .single();
+            .maybeSingle();
 
           if (!error && data) {
             setStarCount(data.star_count);
@@ -103,36 +103,31 @@ export function useSkillStars(skillId: string | undefined): UseSkillStarsReturn 
 
       // Sync to Supabase if available
       if (supabase) {
-        const { data: existingData, error: fetchError } = await supabase
-          .from('skill_stars')
-          .select('star_count')
-          .eq('skill_id', skillId)
-          .single();
-
-        if (fetchError && fetchError.code !== 'PGRST116') {
-          // PGRST116 = not found, which is expected for new skills
-          console.warn('Failed to fetch existing star count:', fetchError);
-        }
-
-        if (existingData) {
-          // Update existing record
-          const { error: updateError } = await supabase
+        try {
+          // Fetch current count first
+          const { data: current } = await supabase
             .from('skill_stars')
-            .update({ star_count: existingData.star_count + 1 })
-            .eq('skill_id', skillId);
+            .select('star_count')
+            .eq('skill_id', skillId)
+            .maybeSingle();
 
-          if (updateError) {
-            console.warn('Failed to update star count:', updateError);
-          }
-        } else {
-          // Insert new record
-          const { error: insertError } = await supabase
+          const newCount = (current?.star_count || 0) + 1;
+
+          // Upsert: insert or update in one call
+          const { error: upsertError } = await supabase
             .from('skill_stars')
-            .insert({ skill_id: skillId, star_count: 1 });
+            .upsert(
+              { skill_id: skillId, star_count: newCount },
+              { onConflict: 'skill_id' }
+            );
 
-          if (insertError) {
-            console.warn('Failed to insert star count:', insertError);
+          if (upsertError) {
+            console.warn('Failed to upsert star count:', upsertError);
+          } else {
+            setStarCount(newCount);
           }
+        } catch (err) {
+          console.warn('Failed to sync star to Supabase:', err);
         }
       }
     } catch (error) {

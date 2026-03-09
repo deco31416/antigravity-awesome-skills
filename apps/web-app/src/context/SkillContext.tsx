@@ -20,7 +20,8 @@ export function SkillProvider({ children }: { children: React.ReactNode }) {
         if (!silent) setLoading(true);
         try {
             // Fetch skills index
-            const res = await fetch('/skills.json');
+            const base = import.meta.env.BASE_URL;
+            const res = await fetch(`${base}skills.json`);
             const data = await res.json();
 
             // Incremental loading: set first 50 skills immediately if not a silent refresh
