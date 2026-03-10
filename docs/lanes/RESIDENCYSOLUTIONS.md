@@ -101,3 +101,41 @@ prototypes/residency-plus/
 Install Netlify CLI:
 ```bash
 npm i -g netlify-cli
+
+```
+
+---
+
+## Official OAuth Endpoints (new — 2026-03-10)
+
+These endpoints use the **official SoundCloud OAuth2 client_credentials flow** (Bearer token) with origin allowlist + rate limiting. They coexist alongside the legacy endpoints.
+
+| Function | Path | Params | Purpose |
+|---|---|---|---|
+| `sc-official-search` | `/.netlify/functions/sc-official-search` | `q` (required), `limit` (optional, max 20) | Search via official API |
+| `sc-official-resolve` | `/.netlify/functions/sc-official-resolve` | `url` (required, must be `https://soundcloud.com/...`) | Resolve URL via official API |
+
+### Required Environment Variables
+
+| Variable | Purpose |
+|---|---|
+| `SOUNDCLOUD_CLIENT_ID` | OAuth client ID |
+| `SOUNDCLOUD_CLIENT_SECRET` | OAuth client secret (new — required by official flow) |
+| `ALLOWED_ORIGINS` | Comma-separated allowed origins, e.g. `http://localhost:8888,http://localhost:3000` |
+
+- **Local dev:** set all three in `prototypes/residency-plus/.env` (gitignored)
+- **Deployed:** Netlify Dashboard → Site Settings → Environment Variables (mark `SOUNDCLOUD_CLIENT_SECRET` as **secret**)
+
+### Security Properties
+- Bearer token cached in memory only — never written to disk or logged
+- Origin allowlist enforced before any processing (403 on disallowed origin)
+- Rate limit: 30 requests / 5-minute rolling window per origin key (in-memory, best-effort)
+- Output field-shaped — raw upstream responses never passed through to the frontend
+- **Frontend must call only these wrapper endpoints** — never SoundCloud directly
+
+### Local Dev (Official Endpoints)
+```powershell
+cd 'C:\Users\sean\antigravity-awesome-skills\prototypes\residency-plus'
+# Ensure .env has all three vars
+netlify dev --dir "." --functions "netlify/functions" --port 8888
+```

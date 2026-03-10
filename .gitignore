@@ -49,3 +49,6 @@ deno.lock
 # local prototype helpers
 prototypes/residency-plus/run_smoke.ps1
 
+# Prototype secrets (belt-and-suspenders — also caught by .env rule above)
+prototypes/residency-plus/.env
+
