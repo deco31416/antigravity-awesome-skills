@@ -646,6 +646,13 @@
       padding: 8px 6px;
     }
 
+    .panelCount {
+      font-size: .72rem;
+      color: rgba(170, 210, 255, .60);
+      font-variant-numeric: tabular-nums;
+      margin-left: 4px;
+    }
+
     .item {
       display: flex;
       align-items: center;
@@ -935,7 +942,10 @@
 
         <div class="card">
           <div class="panelHead">
-            <strong>saved</strong>
+            <div style="display:flex;align-items:center;gap:4px;">
+              <strong>saved</strong>
+              <span class="panelCount" id="crateCount"></span>
+            </div>
             <button class="miniBtn" id="clearCrate">clear</button>
           </div>
           <ul class="list" id="crateList"></ul>
@@ -943,7 +953,10 @@
           <div style="height:12px;"></div>
 
           <div class="panelHead">
-            <strong>history</strong>
+            <div style="display:flex;align-items:center;gap:4px;">
+              <strong>history</strong>
+              <span class="panelCount" id="historyCount"></span>
+            </div>
             <button class="miniBtn" id="clearHistory">clear</button>
           </div>
           <ul class="list" id="historyList"></ul>
@@ -1453,13 +1466,21 @@
       return score;
     }
 
+    const crateCount = document.getElementById("crateCount");
+    const historyCount = document.getElementById("historyCount");
+
     // ===== List rendering =====
     function renderList(el, arr, type) {
       el.innerHTML = "";
+      // Update count badge
+      if (type === "crate" && crateCount) crateCount.textContent = arr.length ? `${arr.length}` : "";
+      if (type === "history" && historyCount) historyCount.textContent = arr.length ? `${arr.length}` : "";
       if (!arr.length) {
         const d = document.createElement("div");
         d.className = "empty";
-        d.textContent = "—";
+        d.textContent = type === "crate" ? "No saved tracks yet — hit Save on a track you like."
+          : type === "history" ? "No history yet — start shuffling."
+            : "—";
         el.appendChild(d);
         return;
       }
@@ -2091,10 +2112,16 @@
     openBtn.onclick = () => openBtn.dataset.url && window.open(openBtn.dataset.url, "_blank");
     saveBtn.onclick = () => {
       if (!currentItem?.url) return;
-      if (crate.some(x => x.url === currentItem.url)) return;
+      if (crate.some(x => x.url === currentItem.url)) {
+        showOk("Already in your saved crate.");
+        setTimeout(() => { okBox.style.display = "none"; }, 2000);
+        return;
+      }
       crate.push(currentItem);
       saveJsonLS(STORAGE_KEY_CRATE, crate);
       renderList(crateList, crate, "crate");
+      showOk("Saved to crate.");
+      setTimeout(() => { okBox.style.display = "none"; }, 1800);
     };
     clearCrate.onclick = () => { crate = []; saveJsonLS(STORAGE_KEY_CRATE, crate); renderList(crateList, crate, "crate"); };
     clearHistory.onclick = () => { history = []; saveJsonLS(STORAGE_KEY_HISTORY, history); renderList(historyList, history, "history"); };
