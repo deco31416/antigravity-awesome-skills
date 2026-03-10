@@ -946,7 +946,11 @@
               <strong>saved</strong>
               <span class="panelCount" id="crateCount"></span>
             </div>
-            <button class="miniBtn" id="clearCrate">clear</button>
+            <div style="display:flex;gap:4px;align-items:center;">
+              <button class="miniBtn" id="copyCrateBtn" disabled title="Copy track URLs to clipboard">Copy URLs</button>
+              <button class="miniBtn" id="exportCrateBtn" disabled title="Download crate as JSON">Export</button>
+              <button class="miniBtn" id="clearCrate">clear</button>
+            </div>
           </div>
           <ul class="list" id="crateList"></ul>
 
@@ -1468,6 +1472,8 @@
 
     const crateCount = document.getElementById("crateCount");
     const historyCount = document.getElementById("historyCount");
+    const copyCrateBtn = document.getElementById("copyCrateBtn");
+    const exportCrateBtn = document.getElementById("exportCrateBtn");
 
     // ===== List rendering =====
     function renderList(el, arr, type) {
@@ -1475,6 +1481,11 @@
       // Update count badge
       if (type === "crate" && crateCount) crateCount.textContent = arr.length ? `${arr.length}` : "";
       if (type === "history" && historyCount) historyCount.textContent = arr.length ? `${arr.length}` : "";
+      // Update crate action buttons
+      if (type === "crate") {
+        if (copyCrateBtn) copyCrateBtn.disabled = arr.length === 0;
+        if (exportCrateBtn) exportCrateBtn.disabled = arr.length === 0;
+      }
       if (!arr.length) {
         const d = document.createElement("div");
         d.className = "empty";
@@ -1932,6 +1943,35 @@
       a.remove();
       setTimeout(() => URL.revokeObjectURL(a.href), 5000);
     }
+
+    function exportCrate() {
+      if (!crate.length) return;
+      const payload = {
+        exportedAt: new Date().toISOString(),
+        count: crate.length,
+        tracks: crate.map(it => ({
+          title: it.title || "",
+          artist: it.artist || "",
+          url: it.url || "",
+          kind: it.kind || "",
+          bucket: it.bucket || "",
+          durationMs: it.durationMs || 0
+        }))
+      };
+      downloadFile(`residency-crate-${Date.now()}.json`, JSON.stringify(payload, null, 2));
+    }
+
+    async function copyCrateUrls() {
+      if (!crate.length) return;
+      const text = crate.map(it => it.url).filter(Boolean).join("\n");
+      try {
+        await navigator.clipboard.writeText(text);
+        showOk(`${crate.length} URL${crate.length > 1 ? "s" : ""} copied to clipboard.`);
+        setTimeout(() => { okBox.style.display = "none"; }, 2200);
+      } catch {
+        showError("Clipboard access denied. Copy from browser console.");
+      }
+    }
     function downloadExport() {
       const payload = {
         exportedAt: new Date().toISOString(),
@@ -2125,6 +2165,8 @@
     };
     clearCrate.onclick = () => { crate = []; saveJsonLS(STORAGE_KEY_CRATE, crate); renderList(crateList, crate, "crate"); };
     clearHistory.onclick = () => { history = []; saveJsonLS(STORAGE_KEY_HISTORY, history); renderList(historyList, history, "history"); };
+    copyCrateBtn.onclick = () => copyCrateUrls();
+    exportCrateBtn.onclick = () => exportCrate();
 
     autoDigBtn.onclick = debouncedAutoDig;
 
