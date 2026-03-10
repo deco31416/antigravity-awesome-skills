@@ -15,14 +15,8 @@ To verify that the server is running correctly and correctly handles missing cli
    ```powershell
    # Health check -> should return 200 with ok: false
    curl.exe -i "http://localhost:8888/.netlify/functions/sc-health"
-
-   # Search endpoint -> should return 400 JSON with error message
-   curl.exe -i "http://localhost:8888/.netlify/functions/sc-search?q=test&kind=tracks"
-
-   # Resolve endpoint -> should return 400 JSON with error message
-   curl.exe -i "http://localhost:8888/.netlify/functions/sc-resolve?url=https://soundcloud.com/"
    ```
-   **Expected Behavior:** All endpoints return 400 Bad Request JSON specifying that the `SOUNDCLOUD_CLIENT_ID` is missing, except `sc-health` which returns `200 OK` with `{"ok":false,"message":"Missing or placeholder SOUNDCLOUD_CLIENT_ID"}`.
+   **Expected Behavior:** `sc-health` returns `200 OK` with `{"ok":false,"message":"Missing or placeholder SOUNDCLOUD_CLIENT_ID"}`.
 
 3. **Verify UI Guard**
    - Open `http://localhost:8888`

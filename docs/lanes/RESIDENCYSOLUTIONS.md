@@ -71,17 +71,6 @@ These use the **official SoundCloud OAuth2 client_credentials flow** (Bearer tok
 | `sc-official-search` | `/.netlify/functions/sc-official-search` | `q` (required), `limit` (max 20) | Search via official API |
 | `sc-official-resolve`| `/.netlify/functions/sc-official-resolve`| `url` (required) | Resolve SC URL |
 
-### Legacy Endpoints (Fallback Only)
-Retained for rollback purposes only.
-
-| Function | Path | Params | Purpose |
-|----------|------|--------|---------|
-| `sc-search` | `/.netlify/functions/sc-search` | `q` (required), `kind`, `limit`, `offset` | Search SoundCloud |
-| `sc-resolve` | `/.netlify/functions/sc-resolve` | `url` (required, full SC URL) | Resolve SC URL |
-| `sc-related` | `/.netlify/functions/sc-related` | `url` (required), `limit`, `offset` | Get related tracks (v2→v1 fallback) |
-
-All legacy functions return 400 JSON with a helpful message if `SOUNDCLOUD_CLIENT_ID` is missing.
-
 ---
 
 ## Security Notes
@@ -101,10 +90,7 @@ prototypes/residency-plus/
     └── functions/
         ├── sc-auth-lib.js          # Shared OAuth / rate-limit / origin logic
         ├── sc-official-search.js   # Target for search
-        ├── sc-official-resolve.js  # Target for resolve
-        ├── sc-search.js            # Legacy search (fallback)
-        ├── sc-resolve.js           # Legacy resolve (fallback)
-        └── sc-related.js           # Legacy related (fallback)
+        └── sc-official-resolve.js  # Target for resolve
 ```
 ## Local Runbook (RESIDENCY+ prototype)
 
