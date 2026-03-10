@@ -44,6 +44,8 @@ Aplicar padrões de JSP/JSTL e organização server-side para reduzir erros de c
 - Modelar estado global da UI (dados, filtros, ordenação, aba ativa) e resetar estado antes de novo carregamento.
 - Persistir preferências de visualização no `localStorage` (ordem de colunas e ordenação).
 - Implementar carregamento sob demanda para abas/modais pesados (lazy-load) para reduzir tempo inicial.
+- **Blindagem de Parâmetros**: Sempre definir um valor padrão (fallback) para parâmetros de URL via `c:set` para evitar Erro 500 no servidor Java do Sankhya.
+- **Separação de Camadas (JSP vs JS)**: Evitar injetar tags JSP diretamente dentro de blocos `<script>`. Utilizar containers HTML ocultos para passar dados ao JavaScript, mantendo a saúde do editor de código (IDE Linting).
 
 > Os nomes de tabelas e campos abaixo são representativos e podem variar conforme a implementação da instância.
 
@@ -125,6 +127,27 @@ function trocarAba(aba) {
   if (aba === "pedidos" && !abaCarregada.pedidos) carregarAbaPedidos(produtoAtual.CODPROD);
   if (aba === "parceiros" && !abaCarregada.parceiros) carregarAbaParceiros(produtoAtual.CODPROD);
 }
+```
+**Exemplo de Blindagem e Separação de Camadas**
+
+```jsp
+<%-- 1. Blindagem no topo do arquivo --%>
+<c:set var="v_salesagent" value="${empty param.SALESAGENT ? '0' : param.SALESAGENT}" />
+
+<%-- 2. Container oculto para dados (Separação JSP vs JS) --%>
+<div id="data-container" style="display:none;">
+    [
+    <c:forEach var="row" items="${qDados.rows}" varStatus="loop">
+        { "id": ${row.ID}, "nome": "${fn:replace(row.NOME, '"', '\\"')}" }${!loop.last ? ',' : ''}
+    </c:forEach>
+    ]
+</div>
+
+<script>
+    // 3. JS apenas lê os dados do container
+    const rawData = document.getElementById('data-container').textContent.trim();
+    const myData = rawData ? JSON.parse(rawData) : [];
+</script>
 ```
 
 ### Identidade Visual (Colors)
