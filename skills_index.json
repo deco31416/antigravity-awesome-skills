@@ -7190,6 +7190,16 @@
     "date_added": "2026-02-27"
   },
   {
+    "id": "local-llm-expert",
+    "path": "skills/local-llm-expert",
+    "category": "data-ai",
+    "name": "local-llm-expert",
+    "description": "Master local LLM inference, model selection, VRAM optimization, and local deployment using Ollama, llama.cpp, vLLM, and LM Studio. Expert in quantization formats (GGUF, EXL2) and local AI privacy.",
+    "risk": "unknown",
+    "source": "community",
+    "date_added": "2026-03-11"
+  },
+  {
     "id": "logistics-exception-management",
     "path": "skills/logistics-exception-management",
     "category": "uncategorized",
