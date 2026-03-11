@@ -1385,17 +1385,31 @@
       if (bucket === "dubstep") return isDub;
       return true;
     }
+    let scWidget = null;
     function ensureWidget() {
       if (scWidget) return scWidget;
-      try { scWidget = SC.Widget(playerFrame); return scWidget; } catch { return null; }
+      try {
+        if (typeof SC === "undefined") return null;
+        scWidget = SC.Widget(playerFrame);
+        return scWidget;
+      } catch (e) { return null; }
     }
-    function buildEmbedUrl(url) {
-      return "https://w.soundcloud.com/player/?url=" + encodeURIComponent(url) + "&auto_play=false&color=%238b5cf6&visual=true&show_comments=false";
+    function buildEmbedUrl(url, autoplay = false) {
+      return "https://w.soundcloud.com/player/?url=" + encodeURIComponent(url) + "&auto_play=" + !!autoplay + "&color=%238b5cf6&visual=true&show_comments=false";
     }
     function widgetLoad(url, autoplay = true) {
+      console.log("widgetLoad", url, autoplay);
       const w = ensureWidget();
-      if (!w) { playerFrame.src = buildEmbedUrl(url); return; }
-      w.load(url, { auto_play: !!autoplay, visual: true, show_comments: false });
+      if (w) {
+        try {
+          w.load(url, { auto_play: !!autoplay, visual: true, show_comments: false });
+        } catch (e) {
+          console.error("Widget load failed, falling back to src", e);
+          playerFrame.src = buildEmbedUrl(url, autoplay);
+        }
+      } else {
+        playerFrame.src = buildEmbedUrl(url, autoplay);
+      }
     }
     function widgetPause() { const w = ensureWidget(); try { w && w.pause(); } catch { } }
 
