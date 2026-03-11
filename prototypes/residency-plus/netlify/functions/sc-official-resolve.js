@@ -13,8 +13,6 @@
  */
 
 import { getAccessToken, allowOrigin, checkRateLimit, json, logTelemetry } from "./sc-auth-lib.js";
-import fs from "node:fs";
-import path from "node:path";
 
 const _SAFE_TRACK_FIELDS = [
     "id", "kind", "title", "permalink_url", "genre", "artwork_url",
@@ -54,8 +52,10 @@ export default async function handler(req) {
 
     if (process.env.DEV_FIXTURE_MODE === "true") {
         try {
-            const fixturePath = path.resolve(process.cwd(), "netlify/functions/fixtures/resolve-sample.json");
-            const raw = fs.readFileSync(fixturePath, "utf8");
+            const { readFileSync } = await import("node:fs");
+            const { resolve } = await import("node:path");
+            const fixturePath = resolve(process.cwd(), "netlify/functions/fixtures/resolve-sample.json");
+            const raw = readFileSync(fixturePath, "utf8");
             const data = JSON.parse(raw);
             return json(200, shapeResource(data), "*");
         } catch (e) {
