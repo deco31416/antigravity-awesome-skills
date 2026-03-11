@@ -1,26 +1,13 @@
 /**
  * sc-official-resolve.js — Protected SoundCloud URL resolver via official OAuth API.
- *
- * Endpoint: GET /.netlify/functions/sc-official-resolve
- * Params:
- *   url  (required) — full SoundCloud URL (must begin with https://soundcloud.com)
- *
- * Security:
- *   - Validates Origin against allowlist before processing
- *   - Enforces per-origin rate limiting
- *   - Uses Bearer token (never logged, never in response)
- *   - Returns only safe-shaped fields; never proxies raw upstream
  */
 
-import { getAccessToken, allowOrigin, checkRateLimit, json, logTelemetry } from "./sc-auth-lib.js";
+const { getAccessToken, allowOrigin, checkRateLimit, json, logTelemetry } = require("./sc-auth-lib.js");
 
 const _SAFE_TRACK_FIELDS = [
     "id", "kind", "title", "permalink_url", "genre", "artwork_url",
-    // Engagement context (public counts)
     "playback_count", "favoritings_count", "comment_count",
-    // Duration + upload date
     "duration", "created_at",
-    // BPM (optional)
     "bpm",
 ];
 const _SAFE_PLAYLIST_FIELDS = ["id", "kind", "title", "permalink_url", "genre", "artwork_url", "track_count", "duration", "created_at"];
@@ -47,41 +34,43 @@ function shapeResource(raw) {
     return out;
 }
 
-export default async function handler(req) {
+exports.handler = async function (event, context) {
     const startMs = Date.now();
+    const method = event.httpMethod;
+    const headers = event.headers || {};
+    const origin = headers.origin || headers.Origin;
 
+    // 1. Dev Fixture Mode
     if (process.env.DEV_FIXTURE_MODE === "true") {
         try {
-            const { readFileSync } = await import("node:fs");
-            const { resolve } = await import("node:path");
-            const fixturePath = resolve(process.cwd(), "netlify/functions/fixtures/resolve-sample.json");
-            const raw = readFileSync(fixturePath, "utf8");
+            const fs = require("node:fs");
+            const path = require("node:path");
+            const fixturePath = path.resolve(process.cwd(), "netlify/functions/fixtures/resolve-sample.json");
+            const raw = fs.readFileSync(fixturePath, "utf8");
             const data = JSON.parse(raw);
             return json(200, shapeResource(data), "*");
         } catch (e) {
             return json(500, { error: "Fixture mode enabled but fixture file missing.", detail: e.message });
         }
     }
-    // OPTIONS preflight
-    if (req.method === "OPTIONS") {
-        const origin = req.headers.get("origin");
+
+    // 2. OPTIONS preflight
+    if (method === "OPTIONS") {
         const allowed = allowOrigin(origin);
-        if (!allowed) return new Response("", { status: 204 });
-        return new Response("", {
-            status: 204,
+        if (!allowed) return { statusCode: 204 };
+        return {
+            statusCode: 204,
             headers: {
                 "access-control-allow-origin": allowed,
                 "access-control-allow-headers": "content-type",
                 "access-control-allow-methods": "GET,OPTIONS",
                 "vary": "Origin",
             },
-        });
+        };
     }
 
-    const origin = req.headers.get("origin");
     logTelemetry("sc_resolve_request", { endpoint: "sc-official-resolve", origin });
 
-    // Origin check
     const allowed = allowOrigin(origin);
     if (origin && !allowed) {
         const status_code = 403;
@@ -89,22 +78,7 @@ export default async function handler(req) {
         return json(status_code, { error: "Origin not permitted." });
     }
 
-    // Dev Fixture Mode bypass
-    if (process.env.DEV_FIXTURE_MODE === "true") {
-        try {
-            const fs = await import("fs");
-            const path = await import("path");
-            const fixturePath = path.join(process.cwd(), "netlify/functions/fixtures/resolve-sample.json");
-            const mockData = JSON.parse(fs.readFileSync(fixturePath, "utf-8"));
-            logTelemetry("sc_resolve_fixture", { endpoint: "sc-official-resolve", origin: allowed, status_code: 200, duration_ms: Date.now() - startMs });
-            return json(200, mockData, allowed);
-        } catch (e) {
-            logTelemetry("sc_resolve_fixture_error", { endpoint: "sc-official-resolve", origin: allowed, error: e.message });
-            return json(500, { error: "Fixture mode enabled but could not read fixture file." }, allowed);
-        }
-    }
-
-    // Rate limit
+    // 3. Rate limit
     const rlKey = allowed || "no-origin";
     const rl = checkRateLimit(rlKey);
     if (!rl.ok) {
@@ -113,70 +87,52 @@ export default async function handler(req) {
         return json(status_code, { error: "Rate limit exceeded. Try again later.", retryAfter: rl.retryAfter }, allowed);
     }
 
-    // Params
-    const reqUrl = new URL(req.url);
-    const target = (reqUrl.searchParams.get("url") || "").trim();
-
-    if (!target) {
+    // 4. Params
+    const scUrl = (event.queryStringParameters.url || "").trim();
+    if (!scUrl) {
         const status_code = 400;
         logTelemetry("sc_resolve_error", { endpoint: "sc-official-resolve", origin: allowed, status_code, duration_ms: Date.now() - startMs });
         return json(status_code, { error: "Missing required param: url" }, allowed);
     }
-    if (!target.startsWith("https://soundcloud.com")) {
+
+    if (!scUrl.startsWith("https://soundcloud.com/")) {
         const status_code = 400;
-        // Don't log the raw bad input to avoid ingestion garbage
         logTelemetry("sc_resolve_error", { endpoint: "sc-official-resolve", origin: allowed, status_code, duration_ms: Date.now() - startMs });
-        return json(status_code, { error: "param 'url' must begin with https://soundcloud.com" }, allowed);
+        return json(status_code, { error: "Invalid SoundCloud URL. Must start with https://soundcloud.com/" }, allowed);
     }
 
-    // Fetch token
+    // 5. Fetch token
     let token;
     try {
         token = await getAccessToken();
     } catch (err) {
-        if (process.env.DEV_USE_PROD_WRAPPER_FALLBACK === "true") {
-            const prodBase = (process.env.DEV_PROD_WRAPPER_BASE || "https://residencysolutions.netlify.app").replace(/\/$/, "");
-            const fallbackUrl = `${prodBase}/.netlify/functions/sc-official-resolve?url=${encodeURIComponent(target)}`;
-            try {
-                // Spoof origin to match production's strict legacy allowlist
-                const fRes = await fetch(fallbackUrl, { headers: { "Origin": "http://localhost:8888" } });
-                const fData = await fRes.json().catch(() => ({}));
-                if (!fRes.ok) {
-                    return json(fRes.status, { error: `[Prod Fallback] ${fData.error || fRes.statusText}` }, allowed);
-                }
-                return json(200, fData, allowed);
-            } catch (fErr) {
-                logTelemetry("sc_resolve_fallback_error", { endpoint: "sc-official-resolve", error: fErr.message });
-            }
-        }
-
         const status_code = 400;
         logTelemetry("sc_resolve_error", { endpoint: "sc-official-resolve", origin: allowed, status_code, duration_ms: Date.now() - startMs });
         return json(status_code, { error: err.message }, allowed);
     }
 
-    // Call official API
-    const apiUrl = new URL("https://api.soundcloud.com/resolve");
-    apiUrl.searchParams.set("url", target);
+    // 6. Call official API
+    const apiUrl = `https://api.soundcloud.com/resolve?url=${encodeURIComponent(scUrl)}`;
 
     let upstream;
     try {
-        upstream = await fetch(apiUrl.toString(), {
+        upstream = await fetch(apiUrl, {
             headers: {
                 "Authorization": `Bearer ${token}`,
                 "Accept": "application/json; charset=utf-8",
             },
         });
-    } catch {
+    } catch (e) {
         const status_code = 502;
         logTelemetry("sc_resolve_error", { endpoint: "sc-official-resolve", origin: allowed, status_code, duration_ms: Date.now() - startMs });
         return json(status_code, { error: "Upstream request failed — network error." }, allowed);
     }
 
-    if (upstream.status === 429) {
-        logTelemetry("upstream_429", { endpoint: "sc-official-resolve", origin: allowed, status_code: 429, upstream_status: 429, duration_ms: Date.now() - startMs });
-        return json(429, { error: "Upstream rate limit. Try again later." }, allowed);
+    if (upstream.status === 404) {
+        logTelemetry("sc_resolve_404", { endpoint: "sc-official-resolve", origin: allowed, status_code: 404, duration_ms: Date.now() - startMs });
+        return json(404, { error: "SoundCloud resource not found." }, allowed);
     }
+
     if (!upstream.ok) {
         const status_code = 502;
         logTelemetry("sc_resolve_error", { endpoint: "sc-official-resolve", origin: allowed, status_code, upstream_status: upstream.status, duration_ms: Date.now() - startMs });
@@ -186,7 +142,7 @@ export default async function handler(req) {
     let data;
     try {
         data = await upstream.json();
-    } catch {
+    } catch (e) {
         const status_code = 502;
         logTelemetry("sc_resolve_error", { endpoint: "sc-official-resolve", origin: allowed, status_code, upstream_status: upstream.status, duration_ms: Date.now() - startMs });
         return json(status_code, { error: "Upstream returned invalid JSON." }, allowed);
@@ -194,4 +150,5 @@ export default async function handler(req) {
 
     logTelemetry("sc_resolve_success", { endpoint: "sc-official-resolve", origin: allowed, status_code: 200, upstream_status: 200, duration_ms: Date.now() - startMs });
     return json(200, shapeResource(data), allowed);
-}
+};
+
