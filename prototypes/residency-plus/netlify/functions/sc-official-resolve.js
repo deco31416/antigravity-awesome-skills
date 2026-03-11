@@ -50,6 +50,18 @@ function shapeResource(raw) {
 export default async function handler(req) {
     const startMs = Date.now();
 
+    if (process.env.DEV_FIXTURE_MODE === "true") {
+        try {
+            const { readFileSync } = await import("node:fs");
+            const { resolve } = await import("node:path");
+            const fixturePath = resolve(process.cwd(), "netlify/functions/fixtures/resolve-sample.json");
+            const raw = readFileSync(fixturePath, "utf8");
+            const data = JSON.parse(raw);
+            return json(200, shapeResource(data), "*");
+        } catch (e) {
+            return json(500, { error: "Fixture mode enabled but fixture file missing.", detail: e.message });
+        }
+    }
     // OPTIONS preflight
     if (req.method === "OPTIONS") {
         const origin = req.headers.get("origin");

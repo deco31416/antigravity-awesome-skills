@@ -38,6 +38,18 @@ function shapeTrack(raw) {
 export default async function handler(req) {
     const startMs = Date.now();
 
+    if (process.env.DEV_FIXTURE_MODE === "true") {
+        try {
+            const { readFileSync } = await import("node:fs");
+            const { resolve } = await import("node:path");
+            const fixturePath = resolve(process.cwd(), "netlify/functions/fixtures/search-ambient.json");
+            const raw = readFileSync(fixturePath, "utf8");
+            const data = JSON.parse(raw);
+            return json(200, { collection: data.map(shapeTrack).filter(Boolean) }, "*");
+        } catch (e) {
+            return json(500, { error: "Fixture mode enabled but fixture file missing.", detail: e.message });
+        }
+    }
     // OPTIONS preflight
     if (req.method === "OPTIONS") {
         const origin = req.headers.get("origin");
