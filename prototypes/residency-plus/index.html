@@ -1399,6 +1399,8 @@
     }
     function widgetPause() { const w = ensureWidget(); try { w && w.pause(); } catch { } }
 
+    function setProgress(msg) { progressLine.textContent = msg || ""; }
+
     // ===== Netlify functions =====
     let activeController = null;
     let lastReqAt = 0;
