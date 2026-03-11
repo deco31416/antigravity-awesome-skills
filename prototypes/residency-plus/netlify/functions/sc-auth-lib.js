@@ -86,25 +86,31 @@ export async function getAccessToken() {
 
 // ── Origin allowlist ──────────────────────────────────────────────────────────
 
-const _DEV_ORIGINS = new Set([
-  "http://localhost:8888",
-  "http://localhost:3000",
-]);
-
 /**
  * Returns the origin string if allowed, or null if rejected.
  * Reads ALLOWED_ORIGINS env var (comma-separated).
+ * Automatically permits ANY localhost/127.0.0.1 port to prevent local dev port
+ * drift (e.g. localhost:8889) from silently breaking requests.
  * @param {string|null} origin
  * @returns {string|null}
  */
 export function allowOrigin(origin) {
-  if (!origin) return null;   // no Origin header → reject (non-browser requests ok via null check in handlers)
+  if (!origin) return null;
+  const o = origin.trim().toLowerCase();
 
-  if (_DEV_ORIGINS.has(origin)) return origin;
+  // 1. Dynamic Localhost wildcard
+  if (o.startsWith("http://localhost:") || o.startsWith("http://127.0.0.1:")) {
+    return origin; // preserve exact matching casing
+  }
 
-  const envList = (process.env.ALLOWED_ORIGINS || "")
-    .split(",").map(s => s.trim()).filter(Boolean);
-  if (envList.includes(origin)) return origin;
+  // 2. Production .env ALLOWED_ORIGINS
+  const envOrigins = (process.env.ALLOWED_ORIGINS || "").split(",")
+    .map(x => x.trim().toLowerCase())
+    .filter(Boolean);
+
+  if (envOrigins.includes(o)) {
+    return origin;
+  }
 
   return null;
 }

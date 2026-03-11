@@ -2303,13 +2303,22 @@
     async function runPool(tasks, concurrency = 3) {
       const results = [];
       let i = 0;
+      let firstError = null;
       const workers = new Array(concurrency).fill(0).map(async () => {
         while (i < tasks.length) {
           const idx = i++;
-          try { results[idx] = await tasks[idx](); } catch (e) { results[idx] = null; }
+          try {
+            results[idx] = await tasks[idx]();
+          } catch (e) {
+            if (!firstError) firstError = e;
+            results[idx] = null;
+          }
         }
       });
       await Promise.all(workers);
+      if (results.every(r => r === null) && firstError) {
+        throw firstError;
+      }
       return results;
     }
 
