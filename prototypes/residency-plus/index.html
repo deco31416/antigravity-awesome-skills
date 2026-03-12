@@ -1018,6 +1018,7 @@
             <button id="saveBtn" class="btn" disabled>Save</button>
             <button id="openBtn" class="btn" disabled>Open ↗</button>
             <span class="mini" id="playbackHint" style="margin-left:8px; opacity:.8;"></span>
+            <button id="retryPlaybackBtn" class="miniBtn" style="margin-left:4px; display:none;">Retry in-app</button>
           </div>
 
           <div class="drawer" id="drawer">
@@ -1271,6 +1272,7 @@
     const vibeBtn = document.getElementById("vibeBtn");
     const vibePresetSelect = document.getElementById("vibePresetSelect");
     const playbackHint = document.getElementById("playbackHint");
+    const retryPlaybackBtn = document.getElementById("retryPlaybackBtn");
 
     // ===== misc helpers =====
     const sleep = (ms) => new Promise(r => setTimeout(r, ms));
@@ -1536,10 +1538,14 @@
         playbackLimited = true;
         setStatus("PLAYBACK LIMITED");
         if (playbackHint) {
-          playbackHint.textContent = "Playback limited — open on SoundCloud or retry once in a while.";
+          playbackHint.textContent = "Playback limited — keep digging here, open tracks on SoundCloud to play.";
+        }
+        if (retryPlaybackBtn) {
+          retryPlaybackBtn.style.display = "inline-block";
         }
         try { sendClientEvent("playback_challenge_detected", { source, count: playbackErrorCount }); } catch { }
         try { sendClientEvent("playback_limited_session_entered", { reason: source }); } catch { }
+        try { sendClientEvent("external_playback_mode_entered", { reason: source }); } catch { }
       } else if (playbackLimited && now - lastPlaybackErrorAt < PLAYBACK_CHALLENGE_COOLDOWN_MS) {
         // stay limited; avoid spamming errors
       }
@@ -1549,7 +1555,9 @@
       playbackLimited = false;
       playbackErrorCount = 0;
       if (playbackHint) playbackHint.textContent = "";
+      if (retryPlaybackBtn) retryPlaybackBtn.style.display = "none";
       try { sendClientEvent("playback_limited_session_cleared", { reason }); } catch { }
+      try { sendClientEvent("external_playback_mode_cleared", { reason }); } catch { }
     }
     function ensureWidget() {
       if (scWidget) return scWidget;
@@ -2865,7 +2873,13 @@
     };
     prevArrow.onclick = () => { if (history.length >= 2) loadItem(history[1], true); };
 
-    openBtn.onclick = () => openBtn.dataset.url && window.open(openBtn.dataset.url, "_blank");
+    openBtn.onclick = () => {
+      if (!openBtn.dataset.url) return;
+      try {
+        sendClientEvent("external_playback_open_clicked", { limited: playbackLimited });
+      } catch { }
+      window.open(openBtn.dataset.url, "_blank");
+    };
     saveBtn.onclick = () => {
       if (!currentItem?.url) return;
       if (crate.some(x => x.url === currentItem.url)) {
@@ -2920,6 +2934,24 @@
         vibeInput.value = val;
         if (window.SC_OK === false) return;
         runVibeSearch();
+      };
+    }
+
+    if (retryPlaybackBtn) {
+      retryPlaybackBtn.onclick = () => {
+        try { sendClientEvent("retry_in_app_playback_clicked", { limited: playbackLimited }); } catch { }
+        if (!currentItem?.url) return;
+        const now = Date.now();
+        const PLAYBACK_CHALLENGE_COOLDOWN_MS = 10 * 60 * 1000;
+        if (playbackLimited && now - lastPlaybackErrorAt < PLAYBACK_CHALLENGE_COOLDOWN_MS) {
+          if (playbackHint) playbackHint.textContent = "Still limited — keep using Open on SoundCloud.";
+          try { sendClientEvent("retry_in_app_playback_failed", { reason: "cooldown_active" }); } catch { }
+          return;
+        }
+        playbackLimited = false;
+        playbackErrorCount = 0;
+        if (playbackHint) playbackHint.textContent = "Retrying in-app playback…";
+        widgetLoad(currentItem.url, true, true);
       };
     }
 
