@@ -1076,7 +1076,8 @@
               <span class="panelCount" id="crateCount"></span>
             </div>
             <div style="display:flex;gap:4px;align-items:center;">
-          <button class="miniBtn" id="crateVibeBtn" title="Search for more tracks like your saved crate">Vibe from crate</button>
+              <button class="miniBtn" id="crateVibeBtn" title="Search for more tracks like your saved crate">Vibe from crate</button>
+              <button class="miniBtn" id="crateAddTopFromVibeBtn" title="Add a few top current vibe results into your saved crate">Add vibe top</button>
               <button class="miniBtn" id="copyCrateBtn" disabled title="Copy track URLs to clipboard">Copy URLs</button>
               <button class="miniBtn" id="exportCrateBtn" disabled title="Download crate as JSON">Export</button>
               <button class="miniBtn" id="clearCrate">clear</button>
@@ -1287,6 +1288,7 @@
 
     const crateList = document.getElementById("crateList");
     const crateVibeBtn = document.getElementById("crateVibeBtn");
+    const crateAddTopFromVibeBtn = document.getElementById("crateAddTopFromVibeBtn");
     const historyList = document.getElementById("historyList");
     const clearCrate = document.getElementById("clearCrate");
     const clearHistory = document.getElementById("clearHistory");
@@ -1724,6 +1726,7 @@
     let playedMap = {};
     let playedSet = new Set();
     let playlists = [];
+    let currentVibeSession = null;
 
     // anti-skip / anti-double-shuffle
     let shuffleInFlight = false;
@@ -2201,16 +2204,36 @@
         resetContext();
         pickAndPlay(library);
         setStatus("PLAYING");
+
+        currentVibeSession = {
+          createdAt: now,
+          palette,
+          prompt,
+          bucket: genreSelect.value || "all",
+          source: sourceSelect.value || "both",
+          results: mapped.slice(0, 50)
+        };
+
         saveVibePreset(palette);
-        if (shouldSample()) {
-          sendClientEvent("discovery_vibe_search", {
-            raw: palette.raw,
-            moods: palette.moods,
-            energies: palette.energies,
-            textures: palette.textures,
-            instruments: palette.instruments
-          });
-        }
+        try {
+          if (shouldSample && typeof shouldSample === "function" && shouldSample()) {
+            sendClientEvent("vibe_session_created", {
+              raw: palette.raw,
+              count: mapped.length,
+              bucket: genreSelect.value || "all",
+              source: sourceSelect.value || "both"
+            });
+          }
+          if (shouldSample()) {
+            sendClientEvent("discovery_vibe_search", {
+              raw: palette.raw,
+              moods: palette.moods,
+              energies: palette.energies,
+              textures: palette.textures,
+              instruments: palette.instruments
+            });
+          }
+        } catch { }
       } catch (e) {
         showError(String(e?.message || e));
         setStatus("READY");
@@ -3072,6 +3095,17 @@
     };
     nextArrow.onclick = () => {
       if (window.SC_OK === false) return;
+      if (currentVibeSession && Array.isArray(currentVibeSession.results) && currentVibeSession.results.length) {
+        try {
+          sendClientEvent("vibe_keep_digging_clicked", {
+            raw: currentVibeSession.palette?.raw || "",
+            bucket: currentVibeSession.bucket || genreSelect.value || "all",
+            source: currentVibeSession.source || sourceSelect.value || "both"
+          });
+        } catch { }
+        debouncedSearch();
+        return;
+      }
       debouncedSearch();
     };
     prevArrow.onclick = () => { if (history.length >= 2) loadItem(history[1], true); };
@@ -3129,6 +3163,42 @@
           playlistVibeCount += 1;
         }
         runPlaylistVibeSearchFromCrate();
+      };
+    }
+    if (crateAddTopFromVibeBtn) {
+      crateAddTopFromVibeBtn.onclick = () => {
+        if (!currentVibeSession || !Array.isArray(currentVibeSession.results) || !currentVibeSession.results.length) {
+          showOk("Run a vibe search first, then add from that session.");
+          setTimeout(() => { okBox.style.display = "none"; }, 2400);
+          return;
+        }
+        const top = currentVibeSession.results.slice(0, 5);
+        let added = 0;
+        for (const it of top) {
+          if (!it || !it.url) continue;
+          if (crate.some(x => x.url === it.url)) continue;
+          crate.push({
+            ...it,
+            savedAt: it.savedAt || new Date().toISOString()
+          });
+          added += 1;
+        }
+        if (!added) {
+          showOk("Top vibe results are already in your crate.");
+          setTimeout(() => { okBox.style.display = "none"; }, 2200);
+          return;
+        }
+        saveJsonLS(STORAGE_KEY_CRATE, crate);
+        if (typeof debouncedCrateSync === "function") debouncedCrateSync();
+        renderList(crateList, crate, "crate");
+        try {
+          sendClientEvent("vibe_batch_saved_to_crate", {
+            added,
+            totalCrate: crate.length
+          });
+        } catch { }
+        showOk(`Added ${added} vibe result${added > 1 ? "s" : ""} to crate.`);
+        setTimeout(() => { okBox.style.display = "none"; }, 2200);
       };
     }
     clearHistory.onclick = () => { history = []; saveJsonLS(STORAGE_KEY_HISTORY, history); renderList(historyList, history, "history"); };
