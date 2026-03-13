@@ -1,6 +1,6 @@
 {
   "generatedAt": "2026-02-08T00:00:00.000Z",
-  "total": 1250,
+  "total": 1251,
   "skills": [
     {
       "id": "00-andruia-consultant",
@@ -1430,6 +1430,33 @@
         "glassmorphism"
       ],
       "path": "skills/antigravity-design-expert/SKILL.md"
+    },
+    {
+      "id": "antigravity-skill-orchestrator",
+      "name": "antigravity-skill-orchestrator",
+      "description": "A meta-skill that understands task requirements, dynamically selects appropriate skills, tracks successful skill combinations using agent-memory-mcp, and prevents skill overuse for simple tasks.",
+      "category": "general",
+      "tags": [
+        "[orchestration",
+        "meta-skill",
+        "agent-memory",
+        "task-evaluation]"
+      ],
+      "triggers": [
+        "[orchestration",
+        "meta-skill",
+        "agent-memory",
+        "task-evaluation]",
+        "antigravity",
+        "skill",
+        "orchestrator",
+        "meta",
+        "understands",
+        "task",
+        "requirements",
+        "dynamically"
+      ],
+      "path": "skills/antigravity-skill-orchestrator/SKILL.md"
     },
     {
       "id": "antigravity-workflows",

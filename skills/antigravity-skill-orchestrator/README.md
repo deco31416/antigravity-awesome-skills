@@ -24,7 +24,7 @@ When executing a prompt with an AI assistant via the Antigravity IDE, you can in
 @antigravity-skill-orchestrator Please build a comprehensive dashboard integrating fetching live data, an interactive UI, and performance optimizations.
 ```
 
-The agent will then follow the directives in the `SKILL.md` to break down the task, search memory for similar challenges, assemble the right team of skills (e.g., `@react-patterns` + `@data-fetching`), and execute the task without over-complicating it.
+The agent will then follow the directives in the `SKILL.md` to break down the task, search memory for similar challenges, assemble the right team of skills (e.g., `@react-patterns` + `@nodejs-backend-patterns`), and execute the task without over-complicating it.
 
 ---
 

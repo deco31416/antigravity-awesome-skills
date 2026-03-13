@@ -29,7 +29,7 @@ Not every task requires a specialized skill. For straightforward issues (e.g., s
 Additionally, the orchestrator is strictly forbidden from creating new skills. Its sole purpose is to combine and use existing skills provided by the community or present in the current environment.
 
 Before invoking any skills, evaluate the task:
-1. **Is the task simple/contained?** Solve it directly using baseline tools (`view_file`, `replace_file_content`, `run_command`).
+1. **Is the task simple/contained?** Solve it directly using the agent's ordinary file editing, search, and terminal capabilities available in the current environment.
 2. **Is the task complex/multi-domain?** Only then should you proceed to orchestrate skills.
 
 ### Skill Selection & Combinations
@@ -68,15 +68,15 @@ To build institutional knowledge, the orchestrator relies on the `agent-memory-m
 
 ### 3. Discover and Select Skills
 [Triggered if no past knowledge covers this task]
-1. Analyze the core requirements (e.g., "needs a React UI, a Node backend, and a Postgres database").
-2. Query the locally available skills (using the system's `<skills>` list or `list_skills` tool if available) to find the best match for each requirement.
-3. **If local skills are insufficient**, use `read_url_content` (or the `curl` tool, depending on availability) to fetch the master catalog: `https://raw.githubusercontent.com/sickn33/antigravity-awesome-skills/main/CATALOG.md`.
+1. Analyze the core requirements (e.g., "needs a React UI, a Node.js backend, and a PostgreSQL database").
+2. Query the locally available skills using the current environment's skill list or equivalent discovery mechanism to find the best match for each requirement.
+3. **If local skills are insufficient**, fetch the master catalog with the web or command-line retrieval tools available in the current environment: `https://raw.githubusercontent.com/sickn33/antigravity-awesome-skills/main/CATALOG.md`.
 4. Scan the catalog's 9 main categories to identify the appropriate skills to bring into the current context.
 5. Select the minimal set of skills needed. **Do not over-select.**
 
 ### 4. Apply Skills and Track the Combination
 [Triggered after executing the task using the selected skills]
-1. Assume the task was completed successfully using a new combination of skills (e.g., `@react-patterns` + `@node-backend` + `@postgres-best-practices`).
+1. Assume the task was completed successfully using a new combination of skills (e.g., `@react-patterns` + `@nodejs-backend-patterns` + `@postgresql`).
 2. Record this combination for future use using `memory_write` from `agent-memory-mcp`.
    - Ensure the type is `skill_combination`.
    - Provide a descriptive key and content detailing why these skills worked well together.
@@ -85,7 +85,7 @@ To build institutional knowledge, the orchestrator relies on the `agent-memory-m
 
 ### Example 1: Handling a Simple Task (The Guardrail in Action)
 **User Request:** "Change the color of the submit button in `index.css` to blue."
-**Action:** The skill orchestrator evaluates the task. It determines this is a "simple/contained" task. It **does not** invoke `@css-expert` or `@frontend-design`. It directly edits `index.css`.
+**Action:** The skill orchestrator evaluates the task. It determines this is a "simple/contained" task. It **does not** invoke specialized skills. It directly edits `index.css`.
 
 ### Example 2: Recording a New Skill Combination
 ```javascript
@@ -93,7 +93,7 @@ To build institutional knowledge, the orchestrator relies on the `agent-memory-m
 memory_write({ 
   key: "combination-ecommerce-checkout", 
   type: "skill_combination", 
-  content: "For e-commerce checkouts, using @stripe-integration combined with @react-state-management and @database-optimization effectively handles the full flow from UI state to payment processing to order recording.",
+  content: "For e-commerce checkouts, using @stripe-integration combined with @react-state-management and @postgresql effectively handles the full flow from UI state to payment processing to order recording.",
   tags: ["ecommerce", "checkout", "stripe", "react"]
 })
 ```
