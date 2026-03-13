@@ -5,6 +5,8 @@ description: ALWAYS use this skill when committing code changes — never commit
 
 # Sentry Commit Messages
 
+Use this skill when you need a conventional commit message that matches the repository history and review flow.
+
 Follow these conventions when creating commits for Sentry projects.
 
 ## Prerequisites
