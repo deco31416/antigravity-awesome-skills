@@ -16,7 +16,7 @@ For local dev, set in `prototypes/residency-plus/.env` (gitignored, never commit
 |---|---|---|
 | `SOUNDCLOUD_CLIENT_ID` | ✅ Required | SoundCloud OAuth2 client ID |
 | `SOUNDCLOUD_CLIENT_SECRET` | ✅ Required | OAuth2 client secret — mark as **secret** in Netlify UI |
-| `ALLOWED_ORIGINS` | ✅ Required | Comma-separated allowed origins, e.g. `https://residencysolutions.net,https://residencysolutions.netlify.app,http://localhost:8888` |
+| `ALLOWED_ORIGINS` | ✅ Required | Comma-separated allowed origins. For production include: `https://www.residencysolutions.net`, `https://residencysolutions.net`, `https://residencysolutions.netlify.app`, `http://localhost:8888` (and any branch/preview URLs if needed). |
 | `AXIOM_API_TOKEN` | ⚡ Optional | Axiom ingest token (`xa...` format) — prefixed `xa-`, not `xapt-` |
 | `AXIOM_DATASET` | ⚡ Optional | Value: `residency-plus` |
 | `AXIOM_DOMAIN` | ⚡ Optional | Value: `us-east-1.aws.edge.axiom.co` |

@@ -1,5 +1,7 @@
+# Residency+ — build runs from base; env injection must run before publish.
 [build]
   base = "prototypes/residency-plus"
+  command = "node scripts/inject-env.js"
   publish = "."
   functions = "netlify/functions"
 
