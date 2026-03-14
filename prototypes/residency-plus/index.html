@@ -190,7 +190,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 10px;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       padding: 10px 12px;
       border-radius: 999px;
       background: linear-gradient(180deg, rgba(255, 255, 255, .09), rgba(255, 255, 255, .03));
@@ -209,7 +209,10 @@
       display: flex;
       gap: 10px;
       align-items: center;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
+    }
+    .right {
+      min-width: 0;
     }
 
     .field select,
@@ -4092,6 +4095,9 @@
           checkRecoveryHash();
           if (currentUser) {
             refreshPlanAndEntitlements();
+            if (authTitle) authTitle.textContent = "Account";
+          } else {
+            if (authTitle) authTitle.textContent = "Sign In";
           }
           authModal.style.display = "block";
           try {
@@ -4119,6 +4125,7 @@
           try {
             await rplusSupabase.auth.signOut();
           } catch { }
+          applyAuthUIState(null);
           sendClientEvent("auth_sign_out", {});
           authModal.style.display = "none";
         };

@@ -34,7 +34,13 @@ Use this checklist before launch. Test on **production** (https://www.residencys
 
 - [ ] Sign out if needed; open Sign In → enter email + password → **Continue**.
 - [ ] Modal closes and user is signed in; top bar shows **Account**.
-- [ ] Open **Account** → email, Plan: Free, Upgrade CTA, Manage subscription hidden.
+- [ ] Open **Account** → modal title is **Account** (not "Sign In"); email, Plan: Free, Upgrade CTA, Manage subscription hidden.
+
+## 4b. Sign-out test
+
+- [ ] While signed in, open **Account** → click **Sign Out**.
+- [ ] Modal closes; top bar shows **Sign In** (not "Account").
+- [ ] Open **Account** again → sign-in form and title "Sign In" (not signed-in state).
 
 ---
 
@@ -55,10 +61,11 @@ Use this checklist before launch. Test on **production** (https://www.residencys
 
 ---
 
-## 7. Paid-upgrade test
+## 7. Paid-upgrade test (requires BILLING_ENABLED=true and Stripe env in Netlify)
 
-- [ ] As Free user, click **Upgrade to RESIDENCY+** → redirects to Stripe Checkout.
+- [ ] As Free user, click **Upgrade to RESIDENCY+** → redirects to Stripe Checkout (not "Billing is currently unavailable").
 - [ ] No redirect to localhost; success_url/cancel_url point to production.
+- [ ] If "Billing is currently unavailable" appears: set BILLING_ENABLED=true, STRIPE_SECRET_KEY, STRIPE_PRICE_RESIDENCY_PLUS in Netlify env.
 
 ---
 
