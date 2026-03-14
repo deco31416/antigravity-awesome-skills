@@ -975,9 +975,11 @@
           <button id="vibePresetManageBtn" class="btn" style="display:none; font-size:11px; padding:4px 6px;" title="Rename, pin, or delete selected vibe preset">✎</button>
           <button id="saveSessionBtn" class="btn" style="font-size:11px; padding:4px 6px;" title="Save this dig session for later">Save dig</button>
           <select id="sessionSelect" class="miniSelect" style="display:none; max-width:160px; font-size:11px;" title="Reopen a saved dig session"></select>
-          <!-- Auth: small account entry point, hidden/disabled when AUTH_ENABLED=false -->
-          <button id="accountBtn" class="btn" style="opacity:.6;" disabled>Account</button>
-          <button id="openDrawerBtn" class="btn dots" title="More">⋯</button>
+          <!-- Auth: dedicated slot so discovery/vibe/autodig never rewrite it -->
+          <span id="topbar-auth-slot" style="display:inline-flex; flex-shrink:0; align-items:center; gap:10px;">
+            <button id="accountBtn" class="btn" style="opacity:.6;" disabled>Account</button>
+            <button id="openDrawerBtn" class="btn dots" title="More">⋯</button>
+          </span>
         </div>
       </div>
 
@@ -3812,13 +3814,20 @@
 
       if (!AUTH_ENABLED) {
         if (accountBtn) {
+          console.trace("[auth] HIDE PATH: !AUTH_ENABLED");
           accountBtn.style.display = "none";
         }
         return;
       }
 
-      // Fail-safe: when AUTH_ENABLED is true, always show a visible auth button before the three-dot button
+      // Fail-safe: when AUTH_ENABLED is true, always show a visible auth button in the dedicated slot
       function ensureAuthButtonVisible() {
+        const slot = document.getElementById("topbar-auth-slot");
+        if (slot) {
+          slot.style.setProperty("display", "inline-flex", "important");
+          slot.style.setProperty("visibility", "visible", "important");
+          slot.style.setProperty("opacity", "1", "important");
+        }
         const btn = document.getElementById("accountBtn");
         if (!btn) {
           console.warn("[auth] accountBtn not found in DOM");
@@ -3837,7 +3846,41 @@
         console.log("[auth] accountBtn found; display:", cs.display, "visibility:", cs.visibility, "opacity:", cs.opacity, "rect:", rect.width, "x", rect.height);
         return btn;
       }
+
+      // MutationObserver: log when button or its slot is removed/changed so we can find what hides it
+      function observeAuthButton() {
+        const slot = document.getElementById("topbar-auth-slot");
+        const btn = document.getElementById("accountBtn");
+        if (!slot && !btn) return;
+        const obs = new MutationObserver((mutations) => {
+          for (const m of mutations) {
+            if (m.type === "childList" && m.removedNodes.length) {
+              console.log("[auth] MutationObserver: nodes removed", m.removedNodes, "target", m.target);
+              console.trace("[auth] MutationObserver: removal stack");
+            }
+            if (m.type === "attributes" && (m.attributeName === "style" || m.attributeName === "class" || m.attributeName === "hidden" || m.attributeName === "disabled")) {
+              const el = m.target;
+              if (el.id === "accountBtn" || el.id === "topbar-auth-slot") {
+                console.log("[auth] MutationObserver: attr change", m.attributeName, "on", el.id, "value", el.getAttribute(m.attributeName));
+                console.trace("[auth] MutationObserver: attribute change stack");
+              }
+            }
+          }
+        });
+        if (btn) obs.observe(btn, { attributes: true, attributeFilter: ["style", "class", "hidden", "disabled"], childList: false, subtree: false });
+        if (slot) obs.observe(slot, { attributes: true, attributeFilter: ["style", "class", "hidden"], childList: true, subtree: true });
+      }
+      observeAuthButton();
+
       ensureAuthButtonVisible();
+
+      // Re-apply visibility after other init/layout so nothing can hide the button
+      [0, 100, 300, 500, 1000].forEach((ms) => {
+        setTimeout(() => { if (AUTH_ENABLED) ensureAuthButtonVisible(); }, ms);
+      });
+      window.addEventListener("load", () => {
+        if (AUTH_ENABLED) ensureAuthButtonVisible();
+      }, { once: true });
 
       // Initialize Supabase client (if configured)
       try {
