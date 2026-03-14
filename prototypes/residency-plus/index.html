@@ -1069,6 +1069,10 @@
                 </div>
               </div>
 
+              <div class="row">
+                <button type="button" id="drawerTutorialBtn" class="btn" style="font-size:12px;">Tutorial</button>
+              </div>
+
             </div>
           </div>
         </div>
@@ -1136,6 +1140,19 @@
         </button>
         <div id="billingMsg" style="font-size:11px; opacity:.75; min-height:14px; margin-bottom:8px;"></div>
         <button id="authSignOutBtn" class="btn" style="width:100%; justify-content:center;">Sign Out</button>
+        <a href="#" id="authShowTutorialLink" style="font-size:11px; opacity:.75;">Show tutorial</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="tutorialOverlay" style="display:none; position:fixed; inset:0; z-index:8000; background:rgba(0,0,0,0.6); align-items:center; justify-content:center;">
+    <div id="tutorialCard" style="background:var(--cardBg, #0f172a); padding:20px; border-radius:12px; max-width:320px; box-shadow:0 8px 30px rgba(0,0,0,0.5);">
+      <div id="tutorialTitle" style="font-weight:bold; margin-bottom:8px;"></div>
+      <div id="tutorialBody" style="font-size:14px; opacity:0.9; margin-bottom:12px;"></div>
+      <label style="font-size:12px; opacity:0.8; display:block; margin-bottom:12px;"><input type="checkbox" id="tutorialDontShowAgain"> Don't show again</label>
+      <div style="display:flex; gap:8px; justify-content:flex-end;">
+        <button type="button" id="tutorialSkip" class="btn">Skip</button>
+        <button type="button" id="tutorialNext" class="btnPrimary">Next</button>
       </div>
     </div>
   </div>
@@ -1186,6 +1203,7 @@
     const STORAGE_KEY_MIGRATED = "residency_migrated_v1";
     const STORAGE_KEY_VIBES = "residencyVibes_v1";
     const STORAGE_KEY_SESSIONS = "residencySessions_v1";
+    const STORAGE_KEY_TUTORIAL = "residencyTutorial_v1";
 
     // Supabase config (filled via deploy-time env replacement)
     const SUPA_URL = "%%SUPABASE_URL%%";
@@ -3098,6 +3116,72 @@
     drawerHead.onclick = () => toggleDrawer();
     openDrawerBtn.onclick = () => toggleDrawer(true);
 
+    const tutorialOverlay = document.getElementById("tutorialOverlay");
+    const tutorialTitleEl = document.getElementById("tutorialTitle");
+    const tutorialBodyEl = document.getElementById("tutorialBody");
+    const tutorialDontShowAgain = document.getElementById("tutorialDontShowAgain");
+    const tutorialSkipBtn = document.getElementById("tutorialSkip");
+    const tutorialNextBtn = document.getElementById("tutorialNext");
+    const TUTORIAL_STEPS = [
+      { title: "Shuffle", body: "Discover tracks with one tap. Pick a genre and hit Shuffle to dig." },
+      { title: "Vibe search", body: "Find tracks by mood or sound. Type a vibe (e.g. warm hazy synths) and hit Vibe." },
+      { title: "Save dig / history", body: "Save dig sessions and build your crate. History and saved crate stay with you." },
+      { title: "Stations", body: "Create stations from a track for focused digging. Pick a track and hit Station." },
+      { title: "Residency+", body: "Upgrade for more history, crate space, and vibe presets. Open Account to upgrade." }
+    ];
+    function getTutorialState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_TUTORIAL);
+        if (!raw) return { completed: false, dontShowAgain: false };
+        const o = JSON.parse(raw);
+        return { completed: !!o.completed, dontShowAgain: !!o.dontShowAgain };
+      } catch { return { completed: false, dontShowAgain: false }; }
+    }
+    function saveTutorialState(state) {
+      try { localStorage.setItem(STORAGE_KEY_TUTORIAL, JSON.stringify(state)); } catch { }
+    }
+    let currentTutorialStep = 1;
+    function renderTutorialStep() {
+      const step = TUTORIAL_STEPS[currentTutorialStep - 1];
+      if (!step || !tutorialTitleEl || !tutorialBodyEl) return;
+      tutorialTitleEl.textContent = step.title;
+      tutorialBodyEl.textContent = step.body;
+      if (tutorialNextBtn) tutorialNextBtn.textContent = currentTutorialStep === TUTORIAL_STEPS.length ? "Finish" : "Next";
+    }
+    function closeTutorial(completed) {
+      const dontShowAgain = tutorialDontShowAgain && tutorialDontShowAgain.checked;
+      saveTutorialState({ completed: !!completed, dontShowAgain });
+      if (tutorialOverlay) tutorialOverlay.style.display = "none";
+    }
+    function startTutorial() {
+      if (!tutorialOverlay || !tutorialTitleEl || !tutorialBodyEl || !tutorialNextBtn || !tutorialSkipBtn) return;
+      currentTutorialStep = 1;
+      renderTutorialStep();
+      tutorialOverlay.style.display = "flex";
+      try { sendClientEvent("tutorial_start", {}); } catch { }
+    }
+    window.startTutorial = startTutorial;
+    const drawerTutorialBtn = document.getElementById("drawerTutorialBtn");
+    if (drawerTutorialBtn) drawerTutorialBtn.onclick = () => { startTutorial(); toggleDrawer(false); };
+    function showTutorialIfFirstRun() {
+      const state = getTutorialState();
+      if (state.dontShowAgain || state.completed) return;
+      startTutorial();
+    }
+    if (tutorialSkipBtn) tutorialSkipBtn.onclick = () => {
+      closeTutorial(false);
+      try { sendClientEvent("tutorial_skip", {}); } catch { }
+    };
+    if (tutorialNextBtn) tutorialNextBtn.onclick = () => {
+      if (currentTutorialStep >= TUTORIAL_STEPS.length) {
+        closeTutorial(true);
+        try { sendClientEvent("tutorial_complete", {}); } catch { }
+        return;
+      }
+      currentTutorialStep++;
+      renderTutorialStep();
+    };
+
     let bgMode = "fish";
     function setTheme(theme) {
       document.body.setAttribute("data-theme", theme);
@@ -3137,6 +3221,7 @@
 
     shuffleBtn.onclick = () => {
       if (window.SC_OK === false) { showBanner("Missing SOUNDCLOUD_CLIENT_ID environment variable."); return; }
+      try { sendClientEvent("shuffle_used", {}); } catch { }
       debouncedSearch();
     };
     nextArrow.onclick = () => {
@@ -3258,11 +3343,13 @@
     if (vibeBtn && vibeInput) {
       vibeBtn.onclick = () => {
         if (window.SC_OK === false) return;
+        try { sendClientEvent("vibe_search_used", {}); } catch { }
         runVibeSearch();
       };
       vibeInput.addEventListener("keydown", (e) => {
         if (e.key === "Enter") {
           if (window.SC_OK === false) return;
+          try { sendClientEvent("vibe_search_used", {}); } catch { }
           runVibeSearch();
         }
       });
@@ -3373,6 +3460,7 @@
 
     if (saveSessionBtn && sessionSelect) {
       saveSessionBtn.onclick = () => {
+        try { sendClientEvent("save_dig_used", {}); } catch { }
         if (!currentVibeSession || !currentVibeSession.palette || !currentVibeSession.prompt) {
           showOk("Run a vibe search first before saving a dig session.");
           setTimeout(() => { okBox.style.display = "none"; }, 2400);
@@ -3543,11 +3631,15 @@
     };
     stationSelect.onchange = () => {
       stationId = stationSelect.value || "__all__";
+      try { sendClientEvent("station_used", { source: "select" }); } catch { }
       try { localStorage.setItem(STORAGE_KEY_STATION, stationId); } catch { }
       if (typeof debouncedStateSync === "function") debouncedStateSync();
       resetContext(); doShuffle(false);
     };
-    makeStationBtn.onclick = createStation;
+    makeStationBtn.onclick = () => {
+      try { sendClientEvent("station_used", { source: "create" }); } catch { }
+      createStation();
+    };
 
     clearStationsBtn.onclick = () => {
       stations = []; stationId = "__all__"; saveJsonLS(STORAGE_KEY_STATIONS, stations);
@@ -3788,10 +3880,22 @@
 
       setStatus("READY");
       await doShuffle(false);
+      showTutorialIfFirstRun();
     });
 
     // ===== Auth + Cloud Sync Wiring (gated by AUTH_ENABLED) =====
     document.addEventListener("DOMContentLoaded", () => {
+      const baseUrl = window.location.origin + window.location.pathname;
+      const qs = new URLSearchParams(window.location.search || "");
+      const checkout = qs.get("checkout");
+      if (checkout === "success") { try { sendClientEvent("checkout_success", {}); } catch { } }
+      if (checkout === "cancel") { try { sendClientEvent("checkout_cancel", {}); } catch { } }
+      if (checkout) {
+        qs.delete("checkout");
+        const newSearch = qs.toString() ? "?" + qs.toString() : "";
+        window.history.replaceState({}, "", baseUrl + newSearch);
+      }
+
       const accountBtn = document.getElementById("accountBtn");
       const authModal = document.getElementById("authModal");
       const closeAuthBtn = document.getElementById("closeAuthBtn");
@@ -3956,6 +4060,13 @@
         };
       }
 
+      const authShowTutorialLink = document.getElementById("authShowTutorialLink");
+      if (authShowTutorialLink) authShowTutorialLink.onclick = (e) => {
+        e.preventDefault();
+        if (authModal) authModal.style.display = "none";
+        if (typeof window.startTutorial === "function") window.startTutorial();
+      };
+
       if (authSignOutBtn && authModal) {
         authSignOutBtn.onclick = async () => {
           try {
@@ -3970,15 +4081,18 @@
         upgradeBtn.onclick = async () => {
           if (billingMsg) billingMsg.textContent = "";
           try {
+            try { sendClientEvent("upgrade_click", {}); } catch { }
+            const baseUrl = window.location.origin + window.location.pathname;
             const resp = await callAuthedFunction("billing-create-checkout", "POST", {
-              success_url: window.location.href,
-              cancel_url: window.location.href
+              success_url: baseUrl + "?checkout=success",
+              cancel_url: baseUrl + "?checkout=cancel"
             });
             if (!resp || resp.billing_enabled === false) {
               if (billingMsg) billingMsg.textContent = "Billing is currently unavailable.";
               return;
             }
             if (resp.url) {
+              try { sendClientEvent("checkout_start", {}); } catch { }
               window.location.href = resp.url;
             } else if (billingMsg) {
               billingMsg.textContent = "Unable to start checkout. Try again later.";
@@ -3994,7 +4108,7 @@
           if (billingMsg) billingMsg.textContent = "";
           try {
             try {
-              sendClientEvent("customer_portal_open_clicked", {});
+              sendClientEvent("manage_subscription_open", {});
             } catch { }
             const resp = await callAuthedFunction("billing-create-portal-session", "POST", {
               return_url: window.location.href
@@ -4034,6 +4148,7 @@
           authError.style.display = "none";
           try {
             if (isSignUpMode) {
+              try { sendClientEvent("auth_sign_up_start", {}); } catch { }
               const { error } = await rplusSupabase.auth.signUp({
                 email,
                 password,
@@ -4042,6 +4157,7 @@
                 }
               });
               if (error) throw error;
+              try { sendClientEvent("auth_sign_up_success", {}); } catch { }
               sendClientEvent("auth_sign_up", {});
               authError.style.color = "#22c55e";
               authError.textContent = "Check your email to confirm, then sign in.";
@@ -4050,6 +4166,7 @@
             } else {
               const { error } = await rplusSupabase.auth.signInWithPassword({ email, password });
               if (error) throw error;
+              try { sendClientEvent("auth_sign_in_success", {}); } catch { }
               sendClientEvent("auth_sign_in", {});
               if (authModal) authModal.style.display = "none";
             }
@@ -4418,6 +4535,9 @@
           if (authSignedInState) authSignedInState.style.display = "block";
           if (authCurrentUser) authCurrentUser.textContent = user.email || "";
         } else {
+          currentPlan = "free";
+          currentEntitlements = null;
+          applyPlanUI();
           if (accountBtn) accountBtn.textContent = "Sign In";
           if (authSignedOutState) authSignedOutState.style.display = "block";
           if (authSignedInState) authSignedInState.style.display = "none";
@@ -4426,7 +4546,9 @@
       }
 
       rplusSupabase.auth.getSession().then(({ data: { session } }) => {
-        applyAuthUIState(session?.user || null);
+        const user = session?.user || null;
+        applyAuthUIState(user);
+        if (user) refreshPlanAndEntitlements();
       }).catch(() => {
         applyAuthUIState(null);
       });
@@ -4434,6 +4556,10 @@
       rplusSupabase.auth.onAuthStateChange(async (event, session) => {
         const user = session?.user || null;
         applyAuthUIState(user);
+        if (user) refreshPlanAndEntitlements();
+        if (event === "USER_UPDATED") {
+          try { sendClientEvent("auth_confirmed", {}); } catch { }
+        }
 
         if (user) {
           if (event === "SIGNED_IN") {
