@@ -214,7 +214,6 @@
     .right {
       min-width: 0;
       flex: 1 1 0;
-      min-width: 220px;
     }
     #topbar-auth-slot {
       flex-shrink: 0;
@@ -4390,19 +4389,14 @@
             upgradeBtn.textContent = "Upgrade to RESIDENCY+";
           }, SAFETY_MS);
           const overallTimeout = new Promise((_, reject) => setTimeout(() => reject(new Error("Upgrade timed out")), OVERALL_MS));
-          const SESSION_MS = 12000;
           const run = async () => {
             let session;
-            console.log("[Upgrade] about to get session");
             if (rplusSupabase && rplusSupabase.auth) {
-              const sessionPromise = rplusSupabase.auth.getSession();
-              const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Session timed out")), SESSION_MS));
               try {
-                session = await Promise.race([sessionPromise, timeoutPromise]);
+                session = await rplusSupabase.auth.getSession();
               } catch (sessionErr) {
-                console.log("[Upgrade] getSession failed or timed out", sessionErr?.message || sessionErr);
                 if (billingMsg) {
-                  billingMsg.textContent = sessionErr?.message?.includes("timed out") ? "Session timed out. Please try again or sign in again." : "Please sign in again.";
+                  billingMsg.textContent = "Please sign in again.";
                   billingMsg.style.display = "block";
                 }
                 return;
