@@ -188,7 +188,6 @@
     .topbar {
       display: flex;
       align-items: center;
-      justify-content: space-between;
       gap: 10px;
       flex-wrap: nowrap;
       padding: 10px 12px;
@@ -210,22 +209,29 @@
       gap: 10px;
       align-items: center;
       flex-wrap: nowrap;
+      min-width: 0;
     }
     .right {
-      min-width: 0;
       flex: 1 1 0;
     }
-    #topbar-auth-slot {
-      flex-shrink: 0;
-      max-width: 160px;
-      min-width: 0;
+
+    #vibeInput {
+      width: 100%;
+      max-width: 220px;
+      min-width: 120px;
     }
-    #topbar-auth-slot .btn,
+
+    #vibePresetSelect {
+      max-width: 180px;
+      min-width: 120px;
+    }
+
+    #topbar-auth-slot,
     #accountBtn {
-      max-width: 100%;
+      max-width: 110px;
+      white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      white-space: nowrap;
     }
 
     .field select,
@@ -1442,10 +1448,11 @@
       if (num >= 1_000) return `${(num / 1_000).toFixed(1)}k`;
       return String(num);
     }
-    function looksLikeEmail(str) {
-      const s = (str || "").trim();
-      if (!s) return false;
-      return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s);
+    function sanitizeVibePrompt(value) {
+      const s = String(value || "").trim();
+      if (!s) return "";
+      if (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s)) return "";
+      return s.length > 200 ? s.slice(0, 200) : s;
     }
     function setPill(el, text) {
       if (!el) return;
@@ -2074,7 +2081,8 @@
 
     function saveVibePreset(palette) {
       if (!palette || !palette.raw) return;
-      if (looksLikeEmail(palette.raw)) return;
+      const cleanedRaw = sanitizeVibePrompt(palette.raw);
+      if (!cleanedRaw) return;
       if (currentEntitlements && currentPlan === "free") {
         const limit = currentEntitlements.vibePresetLimit || 5;
         if (savedVibes.length >= limit) {
@@ -2087,7 +2095,7 @@
         }
       }
       const label = vibeLabelForPalette(palette);
-      const raw = palette.raw;
+      const raw = cleanedRaw;
       const existingIdx = savedVibes.findIndex(v => v.raw === raw);
       let existing = null;
       if (existingIdx !== -1) {
@@ -2340,9 +2348,8 @@
 
     async function runVibeSearch() {
       if (!vibeInput) return;
-      const prompt = vibeInput.value.trim();
-      if (looksLikeEmail(prompt)) {
-        // Hard guard: never treat emails as vibe prompts
+      const prompt = sanitizeVibePrompt(vibeInput.value);
+      if (!prompt) {
         vibeInput.value = "";
         return;
       }
@@ -3499,8 +3506,9 @@
       vibePresetSelect.onchange = () => {
         const val = vibePresetSelect.value;
         if (!val) return;
-        if (looksLikeEmail(val)) return;
-        vibeInput.value = val;
+        const cleaned = sanitizeVibePrompt(val);
+        if (!cleaned) return;
+        vibeInput.value = cleaned;
         if (window.SC_OK === false) return;
         runVibeSearch();
       };
@@ -3609,8 +3617,8 @@
         }
         const nowTs = Date.now();
         const palette = currentVibeSession.palette;
-        const prompt = currentVibeSession.prompt;
-        if (looksLikeEmail(prompt)) return;
+        const prompt = sanitizeVibePrompt(currentVibeSession.prompt);
+        if (!prompt) return;
         const bucket = currentVibeSession.bucket || genreSelect.value || "all";
         const source = currentVibeSession.source || sourceSelect.value || "both";
         const topSnapshot = Array.isArray(currentVibeSession.results)
@@ -3687,7 +3695,7 @@
           createdAt: sess.createdAt || Date.now(),
           updatedAt: Date.now(),
           palette: sess.palette || null,
-          prompt: sess.prompt || "",
+          prompt: sanitizeVibePrompt(sess.prompt || ""),
           bucket: sess.bucket || genreSelect.value || "all",
           source: sess.source || sourceSelect.value || "both",
           results: Array.isArray(sess.top) ? sess.top.map(it => ({
@@ -3708,8 +3716,8 @@
         };
 
         if (vibeInput) {
-          const p = sess.prompt || "";
-          vibeInput.value = looksLikeEmail(p) ? "" : p;
+          const p = sanitizeVibePrompt(sess.prompt || "");
+          vibeInput.value = p;
         }
 
         try {
@@ -3999,7 +4007,7 @@
       savedSessions = loadJsonLS(STORAGE_KEY_SESSIONS, []);
       if (!Array.isArray(savedSessions)) savedSessions = [];
       else {
-        savedSessions = savedSessions.filter(s => !looksLikeEmail(s.prompt || ""));
+        savedSessions = savedSessions.filter(s => sanitizeVibePrompt(s.prompt || ""));
         try { saveJsonLS(STORAGE_KEY_SESSIONS, savedSessions); } catch { }
       }
 
@@ -4129,7 +4137,7 @@
       let isSignUpMode = false;
       savedVibes = loadJsonLS(STORAGE_KEY_VIBES, []) || [];
       if (Array.isArray(savedVibes) && savedVibes.length) {
-        savedVibes = savedVibes.filter(v => !looksLikeEmail(v.raw || v.prompt || ""));
+        savedVibes = savedVibes.filter(v => sanitizeVibePrompt(v.raw || v.prompt || ""));
         try { saveJsonLS(STORAGE_KEY_VIBES, savedVibes); } catch { }
       }
       renderVibePresets();
@@ -4813,7 +4821,7 @@
               };
             });
 
-            savedVibes = savedVibes.filter(v => !looksLikeEmail(v.raw || v.prompt || ""));
+            savedVibes = savedVibes.filter(v => sanitizeVibePrompt(v.raw || v.prompt || ""));
             saveJsonLS(STORAGE_KEY_VIBES, savedVibes);
             renderVibePresets();
 
@@ -4889,7 +4897,7 @@
               updatedAt: s.updatedAt || s.createdAt || 0
             }));
 
-            savedSessions = savedSessions.filter(s => !looksLikeEmail(s.prompt || ""));
+            savedSessions = savedSessions.filter(s => sanitizeVibePrompt(s.prompt || ""));
             saveJsonLS(STORAGE_KEY_SESSIONS, savedSessions);
             renderSavedSessions();
 
