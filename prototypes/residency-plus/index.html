@@ -1072,6 +1072,7 @@
                   <span class="pill hidden" id="pillBpm">BPM</span>
                   <span class="pill" id="pillLen">Len</span>
                   <span class="pill" id="pillRel">Uploaded</span>
+                  <span class="pill" id="pillSource" title="Discovery source">Source</span>
 
                   <span class="pill hidden" id="pillPlays">Plays</span>
                   <span class="pill hidden" id="pillLikes">Likes</span>
@@ -1137,6 +1138,19 @@
               <div class="row">
                 <div class="mini" style="opacity:.85">
                   Auto-dig is automatic per filter (Auto-Dig just forces a refill).
+                </div>
+              </div>
+
+              <div class="row" style="flex-wrap:wrap; gap:8px;">
+                <span class="mini" style="font-weight:600; width:100%;">Discovery sources</span>
+                <div id="discoverySourcesWrap" style="display:flex; flex-wrap:wrap; gap:6px 10px; align-items:center;"></div>
+                <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                  <button type="button" id="sourcesSelectAllBtn" class="miniBtn">Select all</button>
+                  <button type="button" id="sourcesClearAllBtn" class="miniBtn">Clear all</button>
+                  <select id="sourcePresetSelect" class="miniSelect" style="max-width:140px; font-size:11px;" title="Saved source presets">
+                    <option value="">Presets</option>
+                  </select>
+                  <button type="button" id="sourcesSavePresetBtn" class="miniBtn" title="Save current selection as preset">Save preset</button>
                 </div>
               </div>
 
@@ -1295,6 +1309,12 @@
     const STORAGE_KEY_VIBES = "residencyVibes_v1";
     const STORAGE_KEY_SESSIONS = "residencySessions_v1";
     const STORAGE_KEY_TUTORIAL = "residencyTutorial_v1";
+    const STORAGE_KEY_DISCOVERY_SOURCES = "residencyDiscoverySources_v1";
+    const STORAGE_KEY_SOURCE_PRESETS = "residencySourcePresets_v1";
+
+    /** Discovery source ids; must match backend SOURCE_IDS. */
+    const DISCOVERY_SOURCE_IDS = ["soundcloud", "youtube", "internet_archive", "bandcamp", "vimeo", "tiktok", "instagram", "uploads"];
+    const DISCOVERY_SOURCE_LABELS = { soundcloud: "SoundCloud", youtube: "YouTube", internet_archive: "Internet Archive", bandcamp: "Bandcamp", vimeo: "Vimeo", tiktok: "TikTok", instagram: "Instagram", uploads: "User Uploads" };
 
     // Supabase config (filled via deploy-time env replacement)
     const SUPA_URL = "%%SUPABASE_URL%%";
@@ -1396,6 +1416,7 @@
     const pillBpm = document.getElementById("pillBpm");
     const pillLen = document.getElementById("pillLen");
     const pillRel = document.getElementById("pillRel");
+    const pillSource = document.getElementById("pillSource");
     const pillPlays = document.getElementById("pillPlays");
     const pillLikes = document.getElementById("pillLikes");
     const pillComms = document.getElementById("pillComms");
@@ -1414,6 +1435,11 @@
     const drawerHead = document.getElementById("drawerHead");
     const drawerBody = document.getElementById("drawerBody");
     const drawerHint = document.getElementById("drawerHint");
+    const discoverySourcesWrap = document.getElementById("discoverySourcesWrap");
+    const sourcesSelectAllBtn = document.getElementById("sourcesSelectAllBtn");
+    const sourcesClearAllBtn = document.getElementById("sourcesClearAllBtn");
+    const sourcePresetSelect = document.getElementById("sourcePresetSelect");
+    const sourcesSavePresetBtn = document.getElementById("sourcesSavePresetBtn");
 
     const themeBtn = document.getElementById("themeBtn");
     const vibeInput = document.getElementById("vibeInput");
@@ -1897,6 +1923,84 @@
       return JSON.parse(text);
     }
 
+    // ===== Multi-source discovery adapters =====
+    async function searchSoundCloud(q, kind, limit, isPool) {
+      const parsed = await scSearch(q, kind, limit, isPool);
+      const col = Array.isArray(parsed?.collection) ? parsed.collection : [];
+      return { collection: col.map(it => ({ ...it, _source: "soundcloud" })), _source: "soundcloud" };
+    }
+    async function searchYouTube(q, kind, limit) {
+      try {
+        const url = `/.netlify/functions/search-youtube?q=${encodeURIComponent(q)}&limit=${Math.min(50, limit)}`;
+        const r = await fetch(url, { cache: "no-store" });
+        const text = await r.text();
+        if (!r.ok) return { collection: [], _source: "youtube" };
+        const data = JSON.parse(text);
+        const col = Array.isArray(data?.collection) ? data.collection : [];
+        return { collection: col.map(it => ({ ...it, _source: "youtube" })), _source: "youtube" };
+      } catch {
+        return { collection: [], _source: "youtube" };
+      }
+    }
+    async function searchInternetArchive(q, kind, limit) {
+      try {
+        const url = `/.netlify/functions/search-internet-archive?q=${encodeURIComponent(q)}&limit=${Math.min(50, limit)}`;
+        const r = await fetch(url, { cache: "no-store" });
+        const text = await r.text();
+        if (!r.ok) return { collection: [], _source: "internet_archive" };
+        const data = JSON.parse(text);
+        const col = Array.isArray(data?.collection) ? data.collection : [];
+        return { collection: col.map(it => ({ ...it, _source: "internet_archive" })), _source: "internet_archive" };
+      } catch {
+        return { collection: [], _source: "internet_archive" };
+      }
+    }
+    async function searchUploads(q, limit) {
+      try {
+        const url = `/.netlify/functions/search-uploads?q=${encodeURIComponent(q)}&limit=${Math.min(50, limit)}`;
+        const r = await fetch(url, { cache: "no-store" });
+        const text = await r.text();
+        if (!r.ok) return { collection: [], _source: "uploads" };
+        const data = JSON.parse(text);
+        const col = Array.isArray(data?.collection) ? data.collection : [];
+        return { collection: col.map(it => ({ ...it, _source: "uploads" })), _source: "uploads" };
+      } catch {
+        return { collection: [], _source: "uploads" };
+      }
+    }
+    function searchScaffold(sourceId) {
+      return async () => ({ collection: [], _source: sourceId });
+    }
+    const SOURCE_ADAPTERS = {
+      soundcloud: (q, kind, limit, isPool) => searchSoundCloud(q, kind, limit, isPool),
+      youtube: (q, kind, limit) => searchYouTube(q, kind, limit),
+      internet_archive: (q, kind, limit) => searchInternetArchive(q, kind, limit),
+      uploads: (q, kind, limit) => searchUploads(q, limit),
+      bandcamp: searchScaffold("bandcamp"),
+      vimeo: searchScaffold("vimeo"),
+      tiktok: searchScaffold("tiktok"),
+      instagram: searchScaffold("instagram")
+    };
+    /** Run search across all enabled+entitled sources and return merged collection with _source on each item. */
+    async function multiSourceSearch(q, kind, limit, isPool = true) {
+      loadDiscoverySourcesState();
+      const sources = enabledDiscoverySources.length ? enabledDiscoverySources : ["soundcloud"];
+      const tasks = sources
+        .filter(id => SOURCE_ADAPTERS[id])
+        .map(id => () => SOURCE_ADAPTERS[id](q, kind, limit, isPool));
+      if (!tasks.length) return { collection: [], bySource: {} };
+      const results = await Promise.all(tasks.map(fn => fn().catch(() => ({ collection: [], _source: null }))));
+      const bySource = {};
+      const collection = [];
+      for (const res of results) {
+        const src = res?._source;
+        const col = Array.isArray(res?.collection) ? res.collection : [];
+        if (src) bySource[src] = (bySource[src] || 0) + col.length;
+        for (const it of col) collection.push({ ...it, _source: it._source || src });
+      }
+      return { collection, bySource };
+    }
+
     // ===== Data =====
     const SEED_LIBRARY = [
       { kind: "track", title: "Seed", artist: "", url: "https://soundcloud.com/haszari/ambient-leftfield-dojo-twisted-frequency", bucket: "leftfield", tags: ["seed"], durationMs: 0, uploadedAt: "", bpmGuess: "", keyGuess: "", plays: null, likes: null, comments: null, _score: 50 }
@@ -1926,6 +2030,10 @@
     let lastPlaybackErrorAt = 0;
     let playbackErrorCount = 0;
     let lastPlayEventAt = 0;
+
+    // ===== Discovery sources (multi-source search) =====
+    let enabledDiscoverySources = []; // ids that are checked and entitled; persisted to LS
+    let sourcePresets = []; // { id, name, sources: string[] }
 
     // ===== Vibe Search state =====
     let lastVibePalette = null;
@@ -2192,20 +2300,17 @@
       for (const q of queries) {
         if (all.length >= 120) break;
         try {
-          const res = await scSearch(q, "tracks", 30, true);
+          const res = await multiSourceSearch(q, "tracks", 30, true);
           if (Array.isArray(res?.collection)) {
-            for (const it of res.collection) {
-              all.push(it);
-            }
+            for (const it of res.collection) all.push(it);
           }
         } catch {
         }
       }
-      // de-dup by url/id
       const seen = new Set();
       const uniq = [];
       for (const it of all) {
-        const key = it.permalink_url || it.id || JSON.stringify([it.title, it.user?.username]);
+        const key = it.url || it.permalink_url || it.id || JSON.stringify([it.title, it.artist || it.user?.username]);
         if (!key || seen.has(key)) continue;
         seen.add(key);
         uniq.push(it);
@@ -2215,9 +2320,9 @@
 
     function scoreVibeCandidate(it, palette) {
       if (!palette || !it) return 0;
-      const title = (it.title || "").toLowerCase();
-      const artist = (it.user?.username || "").toLowerCase();
-      const tags = scTagListToArray(it.tag_list || "").map(t => t.toLowerCase());
+      const title = (it.title || it.name || "").toLowerCase();
+      const artist = (it.artist || it.user?.username || "").toLowerCase();
+      const tags = (Array.isArray(it.tags) ? it.tags : scTagListToArray(it.tag_list || "")).map(t => String(t).toLowerCase());
       const allText = `${title} ${artist} ${tags.join(" ")}`;
 
       let score = 0;
@@ -2324,18 +2429,19 @@
         }
         const mapped = ranked.slice(0, 120).map(sc => ({
           kind: "track",
-          title: sc.title || "",
-          artist: sc.user?.username || "",
-          url: sc.permalink_url || "",
+          title: sc.title || sc.name || "",
+          artist: sc.artist || sc.user?.username || "",
+          url: sc.url || sc.permalink_url || "",
           bucket: genreSelect.value || "other",
-          tags: scTagListToArray(sc.tag_list || ""),
-          durationMs: (sc.full_duration ?? sc.duration ?? 0),
-          uploadedAt: sc.created_at || "",
-          bpmGuess: "",
-          keyGuess: "",
-          plays: sc.playback_count ?? null,
-          likes: sc.likes_count ?? sc.favoritings_count ?? null,
-          comments: sc.comment_count ?? null
+          tags: Array.isArray(sc.tags) ? sc.tags : scTagListToArray(sc.tag_list || ""),
+          durationMs: (sc.durationMs ?? sc.full_duration ?? sc.duration ?? 0),
+          uploadedAt: sc.uploadedAt || sc.created_at || "",
+          bpmGuess: sc.bpmGuess || "",
+          keyGuess: sc.keyGuess || "",
+          plays: sc.playback_count ?? sc.plays ?? null,
+          likes: sc.likes_count ?? sc.favoritings_count ?? sc.likes ?? null,
+          comments: sc.comment_count ?? sc.comments ?? null,
+          _source: sc._source || "soundcloud"
         }));
         if (!mapped.length) {
           showError("No matches for this playlist vibe yet. Try adjusting your crate or use Shuffle.");
@@ -2408,18 +2514,19 @@
         // Adapt candidates into library-style items on the fly
         const mapped = ranked.slice(0, 120).map(sc => ({
           kind: "track",
-          title: sc.title || "",
-          artist: sc.user?.username || "",
-          url: sc.permalink_url || "",
+          title: sc.title || sc.name || "",
+          artist: sc.artist || sc.user?.username || "",
+          url: sc.url || sc.permalink_url || "",
           bucket: genreSelect.value || "other",
-          tags: scTagListToArray(sc.tag_list || ""),
-          durationMs: (sc.full_duration ?? sc.duration ?? 0),
-          uploadedAt: sc.created_at || "",
-          bpmGuess: "",
-          keyGuess: "",
-          plays: sc.playback_count ?? null,
-          likes: sc.likes_count ?? sc.favoritings_count ?? null,
-          comments: sc.comment_count ?? null
+          tags: Array.isArray(sc.tags) ? sc.tags : scTagListToArray(sc.tag_list || ""),
+          durationMs: (sc.durationMs ?? sc.full_duration ?? sc.duration ?? 0),
+          uploadedAt: sc.uploadedAt || sc.created_at || "",
+          bpmGuess: sc.bpmGuess || "",
+          keyGuess: sc.keyGuess || "",
+          plays: sc.playback_count ?? sc.plays ?? null,
+          likes: sc.likes_count ?? sc.favoritings_count ?? sc.likes ?? null,
+          comments: sc.comment_count ?? sc.comments ?? null,
+          _source: sc._source || "soundcloud"
         }));
         if (!mapped.length) {
           showError("No matches for this vibe yet. Try different words or use Shuffle.");
@@ -2775,7 +2882,43 @@
         comments: it?.comment_count ?? null,
         _discovery_pool: forcedBucket || "other",
         _penalty_applied: (it?.title?.toLowerCase()?.trim() === (forcedBucket || "").toLowerCase().trim()),
-        _score: computeDigScore(it, forcedBucket)
+        _score: computeDigScore(it, forcedBucket),
+        _source: "soundcloud"
+      };
+      return pushUnique(item);
+    }
+
+    /** Add a library item from a normalized (non-SC) result. Used by multi-source adapters. */
+    function addLibraryItemFromNormalized(gen, forcedBucket, sourceId) {
+      const url = normalizeUrl(gen?.url || "");
+      if (!url || !url.startsWith("http")) return false;
+      const blob = `${gen?.title || ""} ${gen?.artist || ""} ${(Array.isArray(gen?.tags) ? gen.tags.join(" ") : (gen?.tag_list || "")).toString()}`.toLowerCase();
+      if (isJunkText(blob)) return false;
+      if (!bucketPass(forcedBucket, blob)) return false;
+      const durationMs = Number(gen?.durationMs ?? gen?.duration ?? 0);
+      const kind = classifyKindFromDuration(durationMs);
+      const mode = sourceSelect?.value || "both";
+      if (!isAllowedByMode(kind, durationMs, mode)) return false;
+      const title = (gen?.title || gen?.name || "").toString();
+      const artist = (gen?.artist || gen?.user?.username || "").toString();
+      const tags = Array.isArray(gen?.tags) ? gen.tags : (gen?.tag_list ? (typeof gen.tag_list === "string" ? gen.tag_list.split(" ").filter(Boolean) : []) : []);
+      const item = {
+        kind,
+        title,
+        artist,
+        url,
+        bucket: forcedBucket || "other",
+        tags: Array.from(new Set(tags)).slice(0, 35),
+        durationMs,
+        uploadedAt: gen?.uploadedAt || gen?.created_at || "",
+        bpmGuess: gen?.bpmGuess || parseBpmFromText(blob),
+        keyGuess: gen?.keyGuess || parseKeyFromText(blob),
+        plays: gen?.plays ?? null,
+        likes: gen?.likes ?? null,
+        comments: gen?.comments ?? null,
+        _discovery_pool: forcedBucket || "other",
+        _score: gen?._score ?? 50,
+        _source: sourceId
       };
       return pushUnique(item);
     }
@@ -2933,7 +3076,7 @@
         for (const q of queries) {
           tasks.push(async () => {
             await sleep(Math.random() * 200); // jitter
-            return { kind: "tracks", data: await scSearch(q, "tracks", 80, true), bucket: packKey };
+            return { kind: "tracks", data: await multiSourceSearch(q, "tracks", 80, true), bucket: packKey };
           });
         }
       }
@@ -2941,7 +3084,7 @@
         for (const q of queries.slice(0, 2)) {
           tasks.push(async () => {
             await sleep(Math.random() * 200); // jitter
-            return { kind: "playlists", data: await scSearch(q, "playlists", 70, true), bucket: packKey };
+            return { kind: "playlists", data: await multiSourceSearch(q, "playlists", 70, true), bucket: packKey };
           });
         }
       }
@@ -2953,10 +3096,17 @@
       let added = 0;
       for (const r of results) {
         const collection = Array.isArray(r?.data?.collection) ? r.data.collection : [];
-        // prefer better-scoring
-        collection.sort((a, b) => computeDigScore(b, r.bucket) - computeDigScore(a, r.bucket));
+        const bucket = r?.bucket || packKey;
+        collection.sort((a, b) => (b._score ?? computeDigScore(b, bucket)) - (a._score ?? computeDigScore(a, bucket)));
         for (const it of collection.slice(0, 55)) {
-          const ok = addLibraryItemFromSearchResult(it, r.bucket);
+          const src = it._source || "soundcloud";
+          let ok = false;
+          if (src === "soundcloud" && (it.permalink_url || it.url)) {
+            ok = addLibraryItemFromSearchResult(it, bucket);
+          } else {
+            const gen = { url: it.url || it.permalink_url, title: it.title || it.name, artist: it.artist || it.user?.username, durationMs: it.durationMs ?? (it.duration ? Number(it.duration) : 0), duration: it.duration, created_at: it.created_at || it.uploadedAt, tags: it.tags, tag_list: it.tag_list, _score: it._score };
+            ok = addLibraryItemFromNormalized(gen, bucket, src);
+          }
           if (ok) added++;
         }
       }
@@ -3014,14 +3164,19 @@
       setPill(pillBpm, item.bpmGuess ? `BPM: ${item.bpmGuess}` : null);
       setPill(pillLen, `Len: ${fmtMs(item.durationMs)}`);
       setPill(pillRel, `Uploaded: ${fmtDate(item.uploadedAt)}`);
+      setPill(pillSource, item._source ? (DISCOVERY_SOURCE_LABELS[item._source] || item._source) : null);
       applyStatsPills(item, statsToggle.checked);
 
       addToHistory(item);
       savePlayedUrl(item.url);
       updateModeLabel();
 
-      // Resolve in background: update duration + stats, and auto-skip if wrong bucket.
+      // Resolve in background (SoundCloud only): update duration + stats, and auto-skip if wrong bucket.
       try {
+        if (item._source && item._source !== "soundcloud") {
+          setPill(pillSource, DISCOVERY_SOURCE_LABELS[item._source] || item._source);
+          return;
+        }
         const resolved = await scResolve(item.url);
 
         // Determine kind/duration (resolve gives best duration)
@@ -3279,11 +3434,120 @@
       const next = (typeof force === "boolean") ? force : !isOpen;
       drawerBody.classList.toggle("open", next);
       drawerHint.textContent = next ? "open" : "closed";
+      if (next && discoverySourcesWrap && typeof renderDiscoverySourcesPanel === "function") renderDiscoverySourcesPanel();
     }
     drawerHead.onclick = () => toggleDrawer();
     openDrawerBtn.onclick = () => toggleDrawer(true);
 
-    const tutorialOverlay = document.getElementById("tutorialOverlay");
+    function getUnlockedSourceIds() {
+      const list = currentEntitlements?.unlockedSources;
+      if (Array.isArray(list) && list.length) return list;
+      return ["soundcloud"];
+    }
+    function loadDiscoverySourcesState() {
+      const raw = localStorage.getItem(STORAGE_KEY_DISCOVERY_SOURCES);
+      let list = [];
+      try {
+        if (raw) list = JSON.parse(raw);
+      } catch { }
+      if (!Array.isArray(list)) list = [];
+      const unlocked = getUnlockedSourceIds();
+      enabledDiscoverySources = list.filter(id => unlocked.includes(id));
+      if (enabledDiscoverySources.length === 0) enabledDiscoverySources = ["soundcloud"];
+      sourcePresets = loadJsonLS(STORAGE_KEY_SOURCE_PRESETS, []) || [];
+      if (!Array.isArray(sourcePresets)) sourcePresets = [];
+    }
+    function saveDiscoverySourcesState() {
+      try {
+        localStorage.setItem(STORAGE_KEY_DISCOVERY_SOURCES, JSON.stringify(enabledDiscoverySources));
+      } catch { }
+    }
+    function renderDiscoverySourcesPanel() {
+      if (!discoverySourcesWrap) return;
+      loadDiscoverySourcesState();
+      const unlocked = getUnlockedSourceIds();
+      const unlockedSet = new Set(unlocked);
+      discoverySourcesWrap.textContent = "";
+      for (const id of DISCOVERY_SOURCE_IDS) {
+        const label = DISCOVERY_SOURCE_LABELS[id] || id;
+        const isUnlocked = unlockedSet.has(id);
+        const checked = enabledDiscoverySources.includes(id);
+        const wrap = document.createElement("label");
+        wrap.style.display = "inline-flex";
+        wrap.style.alignItems = "center";
+        wrap.style.gap = "4px";
+        wrap.style.cursor = isUnlocked ? "pointer" : "not-allowed";
+        wrap.style.opacity = isUnlocked ? "1" : "0.6";
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.dataset.sourceId = id;
+        cb.checked = checked && isUnlocked;
+        cb.disabled = !isUnlocked;
+        cb.title = isUnlocked ? "Toggle " + label : "Upgrade to unlock";
+        cb.addEventListener("change", () => {
+          if (!isUnlocked) return;
+          if (cb.checked) {
+            if (!enabledDiscoverySources.includes(id)) enabledDiscoverySources.push(id);
+          } else {
+            enabledDiscoverySources = enabledDiscoverySources.filter(x => x !== id);
+          }
+          if (enabledDiscoverySources.length === 0) enabledDiscoverySources = ["soundcloud"];
+          saveDiscoverySourcesState();
+        });
+        wrap.appendChild(cb);
+        wrap.appendChild(document.createTextNode(label + (isUnlocked ? "" : " \u{1F512}")));
+        discoverySourcesWrap.appendChild(wrap);
+      }
+      if (sourcePresetSelect) {
+        sourcePresetSelect.innerHTML = "<option value=\"\">Presets</option>";
+        for (const pre of sourcePresets) {
+          const opt = document.createElement("option");
+          opt.value = pre.id || pre.name;
+          opt.textContent = pre.name || "Preset";
+          sourcePresetSelect.appendChild(opt);
+        }
+      }
+    }
+    function discoverySourcesSelectAll() {
+      const unlocked = getUnlockedSourceIds();
+      enabledDiscoverySources = [...unlocked];
+      saveDiscoverySourcesState();
+      renderDiscoverySourcesPanel();
+    }
+    function discoverySourcesClearAll() {
+      const unlocked = getUnlockedSourceIds();
+      enabledDiscoverySources = unlocked.includes("soundcloud") ? ["soundcloud"] : (unlocked.length ? [unlocked[0]] : ["soundcloud"]);
+      saveDiscoverySourcesState();
+      renderDiscoverySourcesPanel();
+    }
+    if (sourcesSelectAllBtn) sourcesSelectAllBtn.addEventListener("click", discoverySourcesSelectAll);
+    if (sourcesClearAllBtn) sourcesClearAllBtn.addEventListener("click", discoverySourcesClearAll);
+    if (sourcePresetSelect) {
+      sourcePresetSelect.addEventListener("change", () => {
+        const val = sourcePresetSelect.value;
+        if (!val) return;
+        const pre = sourcePresets.find(p => (p.id || p.name) === val);
+        if (pre && Array.isArray(pre.sources)) {
+          const unlocked = getUnlockedSourceIds();
+          enabledDiscoverySources = pre.sources.filter(s => unlocked.includes(s));
+          if (enabledDiscoverySources.length === 0) enabledDiscoverySources = unlocked.includes("soundcloud") ? ["soundcloud"] : [unlocked[0]];
+          saveDiscoverySourcesState();
+          renderDiscoverySourcesPanel();
+        }
+        sourcePresetSelect.value = "";
+      });
+    }
+    if (sourcesSavePresetBtn) {
+      sourcesSavePresetBtn.addEventListener("click", () => {
+        loadDiscoverySourcesState();
+        const name = window.prompt("Preset name", "My sources");
+        if (!name || !name.trim()) return;
+        const id = "preset_" + Date.now();
+        sourcePresets.push({ id, name: name.trim(), sources: [...enabledDiscoverySources] });
+        try { saveJsonLS(STORAGE_KEY_SOURCE_PRESETS, sourcePresets); } catch { }
+        renderDiscoverySourcesPanel();
+      });
+    }
     const tutorialTitleEl = document.getElementById("tutorialTitle");
     const tutorialBodyEl = document.getElementById("tutorialBody");
     const tutorialDontShowAgain = document.getElementById("tutorialDontShowAgain");
@@ -4012,6 +4276,8 @@
       stationId = (savedStation && stations.some(s => s.id === savedStation)) ? savedStation : "__all__";
       renderStationsSelect();
 
+      loadDiscoverySourcesState();
+
       const fromDb = await idbGet(STORAGE_KEY_LIBRARY);
       if (Array.isArray(fromDb) && fromDb.length) {
         library = fromDb;
@@ -4191,6 +4457,7 @@
         if (billingMsg) {
           billingMsg.textContent = "";
         }
+        if (typeof renderDiscoverySourcesPanel === "function") renderDiscoverySourcesPanel();
         try {
           sendClientEvent("billing_status_viewed", { plan: currentPlan });
         } catch { }
