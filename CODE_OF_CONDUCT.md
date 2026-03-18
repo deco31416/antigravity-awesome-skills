@@ -40,6 +40,36 @@ Project maintainers are responsible for clarifying the standards of acceptable
 behavior and are expected to take appropriate and fair corrective action in
 response to any instances of unacceptable behavior.
 
+## Reporting
+
+If you experience or witness behavior that violates this Code of Conduct, do
+not open a public issue, pull request, or discussion thread.
+
+Instead, contact the project owner privately through GitHub at
+[github.com/sickn33](https://github.com/sickn33). When possible, include:
+
+- A description of what happened
+- Links or screenshots that provide context
+- The usernames of any involved participants
+- The date, time, and location of the incident
+
+If the situation also violates GitHub's platform policies, or you need
+platform-level intervention, you can additionally use GitHub's reporting tools:
+[Reporting abuse or spam](https://docs.github.com/en/site-policy/acceptable-use-policies/github-reporting-abuse-or-spam).
+
+## Response Process
+
+Maintainers will review reports as promptly as possible, evaluate the context
+and potential impact, and decide on an appropriate response. Possible actions
+include a warning, temporary suspension from project spaces, removal of content,
+or a permanent ban from participation.
+
+## Confidentiality
+
+Maintainers will handle reports with care and will share information only with
+people who need it to investigate and respond. Absolute confidentiality cannot
+be guaranteed, but reports will be treated as sensitively as possible.
+
 ## Attribution
 
 This Code of Conduct is adapted from the [Contributor Covenant][homepage],
