@@ -659,6 +659,8 @@ MIT License. See [LICENSE](LICENSE) for details.
 
 ## Star History
 
+[![sickn33/antigravity-awesome-skills - Star History Chart](https://api.star-history.com/image?repos=sickn33/antigravity-awesome-skills&style=landscape1)](https://star-history.com/sickn33/antigravity-awesome-skills)
+
 [![Star History Chart](https://api.star-history.com/svg?repos=sickn33/antigravity-awesome-skills&type=date&legend=top-left)](https://www.star-history.com/#sickn33/antigravity-awesome-skills&type=date&legend=top-left)
 
 If Antigravity Awesome Skills has been useful, consider ⭐ starring the repo!
