@@ -2852,7 +2852,7 @@
         _vibeScore: scoreVibeCandidate(it, palette)
       }));
       scored.sort((a, b) => (b._vibeScore || 0) - (a._vibeScore || 0));
-      return scored.map(x => x.item);
+      return scored.filter(x => x._vibeScore > 0).map(x => ({ ...x.item, _vibeScore: x._vibeScore }));
     }
 
     function derivePlaylistVibePaletteFromCrate() {
@@ -3022,6 +3022,7 @@
           plays: sc.playback_count ?? sc.plays ?? null,
           likes: sc.likes_count ?? sc.favoritings_count ?? sc.likes ?? null,
           comments: sc.comment_count ?? sc.comments ?? null,
+          _score: sc._vibeScore ?? 50,
           _source: sc._source || "soundcloud"
         }));
         if (!mapped.length) {
