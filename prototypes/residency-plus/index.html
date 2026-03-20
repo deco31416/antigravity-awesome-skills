@@ -2945,7 +2945,7 @@
         renderList(crateList, crate, "crate");
         renderList(historyList, history, "history");
         resetContext();
-        pickAndPlay(library);
+        pickAndPlay(getFilteredLibrary());
         setStatus("PLAYING");
         try {
           if (shouldSample && typeof shouldSample === "function") {
@@ -3001,6 +3001,9 @@
         if (!ranked.length) {
           showError("No matches for this vibe yet. Try different words or use Shuffle.");
           setStatus("READY");
+          library = [];
+          currentVibeSession = null;
+          resetContext();
           return;
         }
         // Adapt candidates into library-style items on the fly
@@ -4269,7 +4272,7 @@
         clearStatus();
 
         // Ensure pool is filled for current filter automatically
-        const ok = await ensureMinPool();
+        const ok = currentVibeSession ? library.length > 0 : await ensureMinPool();
         let matches = getFilteredLibrary();
 
         if (!ok || !matches.length) {
@@ -4971,7 +4974,8 @@
             keyGuess: "",
             plays: null,
             likes: null,
-            comments: null
+            comments: null,
+            _source: it._source || it.sourceId || (isAllowedUploadsAudioUrl(it.playableUrl || it.url || "") ? "uploads" : "soundcloud")
           })) : []
         };
 
@@ -4994,7 +4998,7 @@
           renderList(crateList, crate, "crate");
           renderList(historyList, history, "history");
           resetContext();
-          pickAndPlay(library);
+          pickAndPlay(getFilteredLibrary());
           setStatus("PLAYING");
           try {
             sendClientEvent("dig_session_resumed", {
