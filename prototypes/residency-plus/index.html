@@ -2063,7 +2063,13 @@
       try { sendClientEvent("external_playback_mode_cleared", { reason }); } catch { }
     }
     function ensureWidget() {
-      if (scWidget) return scWidget;
+      if (scWidget) {
+        if (!playerFrame?.src?.startsWith("https://w.soundcloud.com/")) {
+          scWidget = null;
+          return null;
+        }
+        return scWidget;
+      }
       try {
         if (typeof SC === "undefined") return null;
         if (!playerFrame?.src?.startsWith("https://w.soundcloud.com/")) return null;
@@ -2093,7 +2099,7 @@
       const PLAYBACK_CHALLENGE_COOLDOWN_MS = 10 * 60 * 1000;
       if (!isAllowedSoundCloudUrl(url)) {
         console.warn("[PlayerGuard] widgetLoad blocked", { url });
-        try { if (playerFrame) playerFrame.src = "about:blank"; } catch { }
+        try { if (playerFrame) { playerFrame.src = "about:blank"; scWidget = null; } } catch { }
         return;
       }
       if (playbackLimited && !force) {
@@ -2124,7 +2130,7 @@
       if (!item) {
         console.warn("[PlayerGuard] blocked invalid currentItem assignment", { reason: "rerender_sanitize_failed" });
         setStatus("Unable to play this item.");
-        try { if (playerFrame) playerFrame.src = "about:blank"; } catch { }
+        try { if (playerFrame) { playerFrame.src = "about:blank"; scWidget = null; } } catch { }
         return;
       }
 
@@ -2148,6 +2154,7 @@
             if (playerFrame) {
               playerFrame.style.display = "none";
               playerFrame.src = "about:blank";
+              scWidget = null;
             }
           } catch { }
           return;
@@ -2162,6 +2169,7 @@
           if (playerFrame) {
             playerFrame.style.display = "none";
             playerFrame.src = "about:blank";
+            scWidget = null;
           }
           if (audioEl) {
             audioEl.pause();
@@ -2185,6 +2193,7 @@
             if (playerFrame) {
               playerFrame.style.display = "";
               playerFrame.src = "about:blank";
+              scWidget = null;
             }
           } catch { }
           return;
@@ -2214,6 +2223,7 @@
         if (playerFrame) {
           playerFrame.style.display = "none";
           playerFrame.src = "about:blank";
+          scWidget = null;
         }
       } catch { }
     }
@@ -3922,6 +3932,7 @@
             if (playerFrame) {
               playerFrame.style.display = "none";
               playerFrame.src = "about:blank";
+              scWidget = null;
             }
           } catch { }
           setStatus("Unable to play this item.");
@@ -3935,6 +3946,7 @@
         if (playerFrame) {
           playerFrame.style.display = "none";
           playerFrame.src = "about:blank";
+          scWidget = null;
         }
         const wrap = document.getElementById("playerUploadsWrap");
         const audioEl = document.getElementById("playerUploadsAudio");
@@ -4004,6 +4016,7 @@
           if (playerFrame) {
             playerFrame.style.display = "none";
             playerFrame.src = "about:blank";
+            scWidget = null;
           }
         } catch { }
         setStatus("Unable to play this item.");
@@ -5278,6 +5291,7 @@
       resetContext();
 
       playerFrame.src = "about:blank";
+      scWidget = null;
       ensureWidget();
 
       try {
