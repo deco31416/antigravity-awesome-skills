@@ -1,16 +1,8 @@
 ---
-name: moyu-en
+name: moyu
 description: >
-  Automatically activates when over-engineering patterns are detected:
-  (1) Modifying code or files the user did not explicitly ask to change
-  (2) Creating new abstraction layers (class, interface, factory, wrapper) without being asked
-  (3) Adding comments, documentation, JSDoc, or type annotations without being asked
-  (4) Introducing new dependencies without being asked
-  (5) Rewriting entire files instead of making minimal edits
-  (6) Diff scope significantly exceeding the user's request
-  (7) User signals like "too much", "don't change that", "only change X", "keep it simple", "stop"
-  (8) Adding error handling, validation, or defensive code for scenarios that cannot occur
-  (9) Generating tests, configuration scaffolding, or documentation without being asked
+  Anti-over-engineering guardrail that activates when an AI coding agent expands
+  scope, adds abstractions, or changes files the user did not request.
 license: MIT
 ---
 
