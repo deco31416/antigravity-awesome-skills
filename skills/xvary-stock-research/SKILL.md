@@ -10,6 +10,12 @@ date_added: "2026-03-23"
 
 Use this skill to produce institutional-depth stock analysis in Claude Code using public EDGAR + market data.
 
+## When to Use
+
+- Use when you need a **verdict-style equity memo** (constructive / neutral / cautious) grounded in **public** filings and quotes.
+- Use when you want **named kill criteria** and a **four-pillar scorecard** (Momentum, Stability, Financial Health, Upside) without a paid data terminal.
+- Use when comparing two tickers with `/compare` and need a structured differential, not a prose-only chat answer.
+
 ## Commands
 
 ### `/analyze {ticker}`
