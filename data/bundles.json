@@ -490,6 +490,7 @@
     "data-core": {
       "description": "Data engineering and analytics foundations.",
       "skills": [
+        "adhx",
         "airflow-dag-patterns",
         "alpha-vantage",
         "analytics-product",

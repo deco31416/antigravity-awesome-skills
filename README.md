@@ -1,7 +1,7 @@
-<!-- registry-sync: version=8.9.0; skills=1326; stars=27239; updated_at=2026-03-25T10:58:45+00:00 -->
-# 🌌 Antigravity Awesome Skills: 1,326+ Agentic Skills for Claude Code, Gemini CLI, Cursor, Copilot & More
+<!-- registry-sync: version=8.9.0; skills=1327; stars=27239; updated_at=2026-03-25T10:58:45+00:00 -->
+# 🌌 Antigravity Awesome Skills: 1,327+ Agentic Skills for Claude Code, Gemini CLI, Cursor, Copilot & More
 
-> **Installable GitHub library of 1,326+ agentic skills for Claude Code, Cursor, Codex CLI, Gemini CLI, Antigravity, and other AI coding assistants.**
+> **Installable GitHub library of 1,327+ agentic skills for Claude Code, Cursor, Codex CLI, Gemini CLI, Antigravity, and other AI coding assistants.**
 
 Antigravity Awesome Skills is a GitHub repository and installer CLI for reusable `SKILL.md` playbooks. Instead of collecting random prompts, you get a searchable, installable skill library for planning, coding, debugging, testing, security review, infrastructure work, product workflows, and growth tasks across the major AI coding assistants.
 
@@ -26,7 +26,7 @@ Antigravity Awesome Skills is a GitHub repository and installer CLI for reusable
 
 - **Installable, not just inspirational**: use `npx antigravity-awesome-skills` to put skills where your tool expects them.
 - **Built for major agent workflows**: Claude Code, Cursor, Codex CLI, Gemini CLI, Antigravity, Kiro, OpenCode, Copilot, and more.
-- **Broad coverage with real utility**: 1,326+ skills across development, testing, security, infrastructure, product, and marketing.
+- **Broad coverage with real utility**: 1,327+ skills across development, testing, security, infrastructure, product, and marketing.
 - **Faster onboarding**: bundles and workflows reduce the time from "I found this repo" to "I used my first skill".
 - **Useful whether you want breadth or curation**: browse the full catalog, start with top bundles, or compare alternatives before installing.
 
@@ -46,7 +46,7 @@ Antigravity Awesome Skills is a GitHub repository and installer CLI for reusable
 - [🧭 Antigravity Workflows](#antigravity-workflows)
 - [⚖️ Alternatives &amp; Comparisons](#alternatives--comparisons)
 - [📦 Features & Categories](#features--categories)
-- [📚 Browse 1,326+ Skills](#browse-1326-skills)
+- [📚 Browse 1,327+ Skills](#browse-1327-skills)
 - [🤝 Contributing](#contributing)
 - [💬 Community](#community)
 - [☕ Support the Project](#support-the-project)
@@ -229,7 +229,7 @@ This installs the same repository-backed skill library through Claude Code's plu
 
 ## Best Skills By Tool
 
-If you want a faster answer than "browse all 1,326+ skills", start with a tool-specific guide:
+If you want a faster answer than "browse all 1,327+ skills", start with a tool-specific guide:
 
 - **[Claude Code skills](docs/users/claude-code-skills.md)**: install paths, starter skills, prompt examples, and plugin marketplace flow.
 - **[Cursor skills](docs/users/cursor-skills.md)**: best starter skills for `.cursor/skills/`, UI-heavy work, and pair-programming flows.
@@ -294,6 +294,7 @@ These skills are continuously reviewed and hardened, but the collection is not "
 - [CN Content Matrix](https://github.com/fullstackcrew-alpha/skill-cn-content-matrix) - Chinese multi-platform content generator for Xiaohongshu, WeChat, Douyin, Bilibili with true style transfer.
 - [Smart PR Review](https://github.com/fullstackcrew-alpha/skill-smart-pr-review) - Opinionated AI code reviewer with 6-layer deep review, Devil's Advocate mode, MUST FIX/SHOULD FIX/SUGGESTION output.
 - [HubSpot Admin Skills](https://github.com/TomGranot/hubspot-admin-skills) - 32 Claude Code skills for auditing, cleaning, enriching, and automating HubSpot CRM. Includes Python scripts, Breeze AI workflow prompts, and a full audit → plan → execute → maintain flow.
+- [Tutor Skills](https://github.com/RoundTable02/tutor-skills) - Transform PDFs, docs, and codebases into Obsidian study vaults with interactive quiz-based learning and proficiency tracking.
 
 ## Three Real Examples
 
@@ -392,7 +393,7 @@ The repository is organized into specialized domains to transform your AI into a
 
 Counts change as new skills are added. For the current full registry, see [CATALOG.md](CATALOG.md).
 
-## Browse 1,326+ Skills
+## Browse 1,327+ Skills
 
 - Open the interactive browser in [`apps/web-app`](apps/web-app).
 - Read the full catalog in [`CATALOG.md`](CATALOG.md).
