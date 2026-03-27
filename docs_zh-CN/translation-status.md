@@ -1,0 +1,112 @@
+# Translation Status
+
+**Started:** 2026-03-27
+**Last Updated:** 2026-03-27
+
+## Summary
+
+- **Total Files:** 68
+- **Completed:** 0
+- **In Progress:** 0
+- **Remaining:** 68
+
+## Progress by Priority
+
+### Priority 1: Core Documentation (6 files)
+- [ ] README.md
+- [ ] users/getting-started.md
+- [ ] users/usage.md
+- [ ] users/faq.md
+- [ ] users/walkthrough.md
+- [ ] users/visual-guide.md
+
+### Priority 2: CLI Integration Guides (6 files)
+- [ ] users/claude-code-skills.md
+- [ ] users/cursor-skills.md
+- [ ] users/gemini-cli-skills.md
+- [ ] users/codex-cli-skills.md
+- [ ] users/ai-agent-skills.md
+- [ ] users/bundles.md
+
+### Priority 3: Advanced User Documentation (15 files)
+- [ ] users/best-claude-code-skills-github.md
+- [ ] users/best-cursor-skills-github.md
+- [ ] users/skills-vs-mcp-tools.md
+- [ ] users/local-config.md
+- [ ] users/kiro-integration.md
+- [ ] users/antigravity-awesome-skills-vs-awesome-claude-skills.md
+- [ ] users/security-skills.md
+- [ ] users/agent-overload-recovery.md
+- [ ] users/windows-truncation-recovery.md
+- [ ] users/workflows.md
+- [ ] WORKFLOWS.md
+- [ ] EXAMPLES.md
+- [ ] USAGE.md
+- [ ] FAQ.md
+- [ ] VISUAL_GUIDE.md
+
+### Priority 4: Contributor Guides (6 files)
+- [ ] contributors/community-guidelines.md
+- [ ] contributors/examples.md
+- [ ] contributors/quality-bar.md
+- [ ] contributors/security-guardrails.md
+- [ ] contributors/skill-anatomy.md
+- [ ] contributors/skill-template.md
+
+### Priority 5: Maintainer Documentation (35 files)
+- [ ] maintainers/merging-prs.md
+- [ ] maintainers/rollback-procedure.md
+- [ ] maintainers/release-notes-7.2.0.md
+- [ ] maintainers/skills-update-guide.md
+- [ ] maintainers/audit.md
+- [ ] maintainers/repo-growth-seo.md
+- [ ] maintainers/security-findings-triage-2026-03-15.md
+- [ ] maintainers/security-findings-triage-2026-03-18-addendum.md
+- [ ] maintainers/release-process.md
+- [ ] maintainers/categorization-implementation.md
+- [ ] maintainers/ci-drift-fix.md
+- [ ] maintainers/date-tracking-implementation.md
+- [ ] maintainers/skills-date-tracking.md
+- [ ] maintainers/skills-import-2026-03-21.md
+- [ ] maintainers/smart-auto-categorization.md
+- [ ] AUDIT.md
+- [ ] BUNDLES.md
+- [ ] CATEGORIZATION_IMPLEMENTATION.md
+- [ ] CI_DRIFT_FIX.md
+- [ ] COMMUNITY_GUIDELINES.md
+- [ ] DATE_TRACKING_IMPLEMENTATION.md
+- [ ] GETTING_STARTED.md
+- [ ] KIRO_INTEGRATION.md
+- [ ] QUALITY_BAR.md
+- [ ] SECURITY_GUARDRAILS.md
+- [ ] SEC_SKILLS.md
+- [ ] SKILLS_DATE_TRACKING.md
+- [ ] SKILL_ANATOMY.md
+- [ ] SKILL_TEMPLATE.md
+- [ ] SMART_AUTO_CATEGORIZATION.md
+- [ ] SOURCES.md
+- [ ] sources/sources.md
+- [ ] walkthrough.md
+- [ ] integrations/jetski-cortex.md
+- [ ] integrations/jetski-gemini-loader/README.md
+
+## Glossary Statistics
+
+- **Total Terms:** 0
+- **Last Updated:** 2026-03-27
+- **Glossary File:** `.glossary.json`
+
+## Batch Progress
+
+- **Batch 1 (Priority 1):** Not started - 0/6 files
+- **Batch 2 (Priority 2):** Not started - 0/6 files
+- **Batch 3 (Priority 3):** Not started - 0/15 files
+- **Batch 4 (Priority 4):** Not started - 0/6 files
+- **Batch 5 (Priority 5):** Not started - 0/35 files
+
+## Notes
+
+- Translation follows priority order from 1 to 5
+- Each batch is validated before proceeding to the next
+- Glossary is built incrementally with each batch
+- Files are checked for broken links and glossary consistency
