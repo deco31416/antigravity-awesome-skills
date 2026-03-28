@@ -1,9 +1,190 @@
 {
   "metadata": {
-    "version": "1.0.0",
+    "version": "1.0.1",
     "created": "2026-03-27",
     "last_updated": "2026-03-27",
-    "total_terms": 0
+    "total_terms": 36
   },
-  "terms": {}
+  "terms": {
+    "skills": {
+      "translation": "技能",
+      "context": "AI assistant capabilities - core concept",
+      "examples": ["use skills", "skill library", "skill execution"]
+    },
+    "repository": {
+      "translation": "仓库",
+      "context": "Git repository or code storage",
+      "examples": ["clone the repository", "repository structure"]
+    },
+    "installation": {
+      "translation": "安装",
+      "context": "Software installation process",
+      "examples": ["installation guide", "install skills"]
+    },
+    "bundles": {
+      "translation": "捆绑包",
+      "context": "Curated skill collections",
+      "examples": ["starter bundles", "bundle recommendations"]
+    },
+    "workflows": {
+      "translation": "工作流",
+      "context": "Step-by-step execution guides",
+      "examples": ["workflow automation", "execution workflows"]
+    },
+    "agents": {
+      "translation": "代理",
+      "context": "AI agents or AI assistants",
+      "examples": ["AI agent", "agent system"]
+    },
+    "cli": {
+      "translation": "命令行界面",
+      "context": "Command Line Interface - keep as CLI in code",
+      "examples": ["CLI tool", "command line"]
+    },
+    "contributor": {
+      "translation": "贡献者",
+      "context": "People contributing to the project",
+      "examples": ["contributors guide", "become a contributor"]
+    },
+    "maintainer": {
+      "translation": "维护者",
+      "context": "People maintaining the project",
+      "examples": ["maintainers guide", "maintainer docs"]
+    },
+    "documentation": {
+      "translation": "文档",
+      "context": "Project documentation",
+      "examples": ["documentation files", "read the docs"]
+    },
+    "github": {
+      "translation": "GitHub",
+      "context": "Platform name - keep in English",
+      "examples": ["GitHub repository", "GitHub stars"]
+    },
+    "claude": {
+      "translation": "Claude",
+      "context": "AI model/assistant name - keep in English",
+      "examples": ["Claude Code", "Claude API"]
+    },
+    "cursor": {
+      "translation": "Cursor",
+      "context": "IDE name - keep in English",
+      "examples": ["Cursor IDE", "Cursor skills"]
+    },
+    "gemini": {
+      "translation": "Gemini",
+      "context": "Google AI - keep in English",
+      "examples": ["Gemini CLI", "Gemini API"]
+    },
+    "codex": {
+      "translation": "Codex",
+      "context": "OpenAI CLI tool - keep in English",
+      "examples": ["Codex CLI", "Codex skills"]
+    },
+    "mcp": {
+      "translation": "MCP",
+      "context": "Model Context Protocol - keep as MCP",
+      "examples": ["MCP server", "MCP tools"]
+    },
+    "npm": {
+      "translation": "npm",
+      "context": "Node package manager - keep in English",
+      "examples": ["npm install", "npm package"]
+    },
+    "plugin": {
+      "translation": "插件",
+      "context": "Software plugin/extension",
+      "examples": ["plugin marketplace", "install plugin"]
+    },
+    "marketplace": {
+      "translation": "市场",
+      "context": "Plugin marketplace",
+      "examples": ["marketplace add", "plugin marketplace"]
+    },
+    "directory": {
+      "translation": "目录",
+      "context": "File system directory",
+      "examples": ["project directory", "skills directory"]
+    },
+    "terminal": {
+      "translation": "终端",
+      "context": "Command line terminal",
+      "examples": ["open terminal", "terminal command"]
+    },
+    "features": {
+      "translation": "功能",
+      "context": "Software features",
+      "examples": ["key features", "feature set"]
+    },
+    "categories": {
+      "translation": "类别",
+      "context": "Classification categories",
+      "examples": ["skill categories", "category list"]
+    },
+    "integration": {
+      "translation": "集成",
+      "context": "Software integration",
+      "examples": ["integration guide", "tool integration"]
+    },
+    "configuration": {
+      "translation": "配置",
+      "context": "Software configuration",
+      "examples": ["configuration file", "setup configuration"]
+    },
+    "development": {
+      "translation": "开发",
+      "context": "Software development",
+      "examples": ["development workflow", "development guide"]
+    },
+    "security": {
+      "translation": "安全",
+      "context": "Security practices",
+      "examples": ["security review", "security guidelines"]
+    },
+    "testing": {
+      "translation": "测试",
+      "context": "Software testing",
+      "examples": ["testing guide", "test files"]
+    },
+    "deployment": {
+      "translation": "部署",
+      "context": "Software deployment",
+      "examples": ["deployment guide", "deploy skills"]
+    },
+    "guide": {
+      "translation": "指南",
+      "context": "Documentation guide",
+      "examples": ["user guide", "getting started guide"]
+    },
+    "tutorial": {
+      "translation": "教程",
+      "context": "Tutorial content",
+      "examples": ["tutorial section", "follow tutorial"]
+    },
+    "example": {
+      "translation": "示例",
+      "context": "Code or usage examples",
+      "examples": ["example code", "usage examples"]
+    },
+    "community": {
+      "translation": "社区",
+      "context": "User/developer community",
+      "examples": ["community guidelines", "join community"]
+    },
+    "feedback": {
+      "translation": "反馈",
+      "context": "User feedback",
+      "examples": ["provide feedback", "feedback loop"]
+    },
+    "release": {
+      "translation": "发布",
+      "context": "Software release",
+      "examples": ["latest release", "release notes"]
+    },
+    "version": {
+      "translation": "版本",
+      "context": "Software version",
+      "examples": ["version number", "check version"]
+    }
+  }
 }
