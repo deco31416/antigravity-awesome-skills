@@ -62,6 +62,9 @@ else
         # Handle relative links
         if [[ "$link" != /* ]] && [[ "$link" != http* ]]; then
             # This is a relative link, check if it exists in docs
+            # LIMITATION: Currently only checks basename, not full relative path
+            # This will report false positives for links like ../../CATALOG.md
+            # TODO: Implement proper relative path resolution after more Chinese docs exist
             if find "$DOCS_DIR" -name "$(basename "$link")" -type f | grep -q .; then
                 ((VALID_COUNT++))
             else

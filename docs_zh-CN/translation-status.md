@@ -12,23 +12,21 @@
 
 ## Progress by Priority
 
-### Priority 1: Core Documentation (6 files)
+### Priority 1: Core Documentation (4 files)
 - [ ] README.md
 - [ ] users/getting-started.md
 - [ ] users/usage.md
 - [ ] users/faq.md
-- [ ] users/walkthrough.md
-- [ ] users/visual-guide.md
 
-### Priority 2: CLI Integration Guides (6 files)
+### Priority 2: CLI Integration Guides (4 files)
 - [ ] users/claude-code-skills.md
 - [ ] users/cursor-skills.md
 - [ ] users/gemini-cli-skills.md
 - [ ] users/codex-cli-skills.md
-- [ ] users/ai-agent-skills.md
-- [ ] users/bundles.md
 
-### Priority 3: Advanced User Documentation (15 files)
+### Priority 3: Advanced User Documentation (17 files)
+- [ ] users/walkthrough.md
+- [ ] users/visual-guide.md
 - [ ] users/best-claude-code-skills-github.md
 - [ ] users/best-cursor-skills-github.md
 - [ ] users/skills-vs-mcp-tools.md
@@ -39,6 +37,8 @@
 - [ ] users/agent-overload-recovery.md
 - [ ] users/windows-truncation-recovery.md
 - [ ] users/workflows.md
+- [ ] users/ai-agent-skills.md
+- [ ] users/bundles.md
 - [ ] WORKFLOWS.md
 - [ ] EXAMPLES.md
 - [ ] USAGE.md
@@ -98,9 +98,9 @@
 
 ## Batch Progress
 
-- **Batch 1 (Priority 1):** Not started - 0/6 files
-- **Batch 2 (Priority 2):** Not started - 0/6 files
-- **Batch 3 (Priority 3):** Not started - 0/15 files
+- **Batch 1 (Priority 1):** Not started - 0/4 files
+- **Batch 2 (Priority 2):** Not started - 0/4 files
+- **Batch 3 (Priority 3):** Not started - 0/17 files
 - **Batch 4 (Priority 4):** Not started - 0/6 files
 - **Batch 5 (Priority 5):** Not started - 0/35 files
 
