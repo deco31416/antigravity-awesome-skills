@@ -1,9 +1,9 @@
 {
   "metadata": {
-    "version": "1.0.1",
+    "version": "1.0.2",
     "created": "2026-03-27",
     "last_updated": "2026-03-27",
-    "total_terms": 36
+    "total_terms": 37
   },
   "terms": {
     "skills": {
@@ -185,6 +185,11 @@
       "translation": "版本",
       "context": "Software version",
       "examples": ["version number", "check version"]
+    },
+    "playbook": {
+      "translation": "剧本",
+      "context": "Step-by-step execution guide or instructions",
+      "examples": ["SKILL.md playbook", "workflow playbook", "execution playbook"]
     }
   }
 }

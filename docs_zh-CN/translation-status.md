@@ -6,14 +6,14 @@
 ## Summary
 
 - **Total Files:** 68
-- **Completed:** 0
+- **Completed:** 1
 - **In Progress:** 0
-- **Remaining:** 68
+- **Remaining:** 67
 
 ## Progress by Priority
 
 ### Priority 1: Core Documentation (4 files)
-- [ ] README.md
+- [x] README.md
 - [ ] users/getting-started.md
 - [ ] users/usage.md
 - [ ] users/faq.md
@@ -92,13 +92,13 @@
 
 ## Glossary Statistics
 
-- **Total Terms:** 0
+- **Total Terms:** 37
 - **Last Updated:** 2026-03-27
 - **Glossary File:** `.glossary.json`
 
 ## Batch Progress
 
-- **Batch 1 (Priority 1):** Not started - 0/4 files
+- **Batch 1 (Priority 1):** In progress - 1/4 files
 - **Batch 2 (Priority 2):** Not started - 0/4 files
 - **Batch 3 (Priority 3):** Not started - 0/17 files
 - **Batch 4 (Priority 4):** Not started - 0/6 files
