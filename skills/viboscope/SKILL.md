@@ -2,7 +2,7 @@
 name: viboscope
 description: "Psychological compatibility matching — find cofounders, collaborators, and friends through validated psychometrics"
 category: collaboration
-risk: network
+risk: safe
 source: community
 date_added: "2026-03-29"
 author: ivanschmidt
