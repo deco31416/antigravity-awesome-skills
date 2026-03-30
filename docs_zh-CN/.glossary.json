@@ -1,9 +1,9 @@
 {
   "metadata": {
-    "version": "1.0.10",
+    "version": "1.0.11",
     "created": "2026-03-27",
     "last_updated": "2026-03-27",
-    "total_terms": 110
+    "total_terms": 123
   },
   "terms": {
     "skills": {
@@ -665,6 +665,61 @@
       "translation": "基础设施",
       "context": "IT infrastructure",
       "examples": ["cloud infrastructure", "infrastructure as code"]
+    },
+    "quality bar": {
+      "translation": "质量标准",
+      "context": "Quality standards and validation criteria",
+      "examples": ["quality bar standards", "meet the quality bar"]
+    },
+    "validation": {
+      "translation": "验证",
+      "context": "Validation or verification process",
+      "examples": ["skill validation", "automated validation"]
+    },
+    "badge": {
+      "translation": "徽章",
+      "context": "Quality or status badge",
+      "examples": ["validated badge", "official badge"]
+    },
+    "frontmatter": {
+      "translation": "前置元数据",
+      "context": "YAML metadata at top of markdown files",
+      "examples": ["SKILL.md frontmatter", "frontmatter fields"]
+    },
+    "trigger": {
+      "translation": "触发",
+      "context": "When to activate or invoke a skill",
+      "examples": ["skill triggers", "trigger conditions"]
+    },
+    "kebab-case": {
+      "translation": "短横线命名法",
+      "context": "lowercase-with-hyphens naming convention",
+      "examples": ["kebab-case naming", "use kebab-case"]
+    },
+    "value prop": {
+      "translation": "价值主张",
+      "context": "Value proposition - why something is useful",
+      "examples": ["clear value prop", "value proposition"]
+    },
+    "risk level": {
+      "translation": "风险级别",
+      "context": "Safety classification level",
+      "examples": ["risk level classification", "assess risk level"]
+    },
+    "command pipeline": {
+      "translation": "命令管道",
+      "context": "Chained commands with pipe operator",
+      "examples": ["curl | bash", "command pipelines"]
+    },
+    "allowlist": {
+      "translation": "允许列表",
+      "context": "Security allowlist for approved commands",
+      "examples": ["security allowlist", "allowlist comment"]
+    },
+    "compliance": {
+      "translation": "合规",
+      "context": "Regulatory or standards compliance",
+      "examples": ["compliance audit", "security compliance"]
     }
   }
 }
