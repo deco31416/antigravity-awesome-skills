@@ -6,9 +6,9 @@
 ## Summary
 
 - **Total Files:** 68
-- **Completed:** 39
+- **Completed:** 49
 - **In Progress:** 0
-- **Remaining:** 29
+- **Remaining:** 19
 
 ## Progress by Priority
 
@@ -49,21 +49,21 @@
 - [x] maintainers/skills-date-tracking.md
 - [x] maintainers/skills-import-2026-03-21.md
 - [x] maintainers/smart-auto-categorization.md
-- [ ] maintainers/audit.md
-- [ ] maintainers/security-findings-triage-2026-03-15.md
-- [ ] maintainers/security-findings-triage-2026-03-18-addendum.md
+- [x] maintainers/audit.md
+- [x] maintainers/security-findings-triage-2026-03-15.md
+- [x] maintainers/security-findings-triage-2026-03-18-addendum.md
 - [ ] maintainers/release-process.md
 - [ ] maintainers/ci-drift-fix.md
-- [ ] AUDIT.md
+- [x] AUDIT.md
 - [ ] BUNDLES.md
-- [ ] CATEGORIZATION_IMPLEMENTATION.md
-- [ ] CI_DRIFT_FIX.md
-- [ ] COMMUNITY_GUIDELINES.md
-- [ ] DATE_TRACKING_IMPLEMENTATION.md
-- [ ] GETTING_STARTED.md
-- [ ] KIRO_INTEGRATION.md
+- [x] CATEGORIZATION_IMPLEMENTATION.md
+- [x] CI_DRIFT_FIX.md
+- [x] COMMUNITY_GUIDELINES.md
+- [x] DATE_TRACKING_IMPLEMENTATION.md
+- [x] GETTING_STARTED.md
+- [x] KIRO_INTEGRATION.md
 - [ ] QUALITY_BAR.md
-- [ ] SECURITY_GUARDRAILS.md
+- [x] SECURITY_GUARDRAILS.md
 - [ ] SEC_SKILLS.md
 - [ ] SKILLS_DATE_TRACKING.md
 - [ ] SKILL_ANATOMY.md
@@ -77,7 +77,7 @@
 
 ## Glossary Statistics
 
-- **Total Terms:** 143
+- **Total Terms:** 163
 - **Last Updated:** 2026-03-27
 - **Glossary File:** `.glossary.json`
 
@@ -87,7 +87,7 @@
 - **Batch 2 (Priority 2):** Complete - 4/4 files ✓
 - **Batch 3 (Priority 3):** Complete - 15/15 files ✓
 - **Batch 4 (Priority 4):** Complete - 6/6 files ✓
-- **Batch 5 (Priority 5):** In progress - 10/35 files
+- **Batch 5 (Priority 5):** In progress - 20/35 files
 
 ## Notes
 
@@ -106,4 +106,5 @@
 - Priority 3: 15/15 files complete ✓
 - Priority 4: 6/6 files complete ✓
 - Priority 5 Batch 1: 10/10 files complete ✓
-- Glossary expanded from 123 to 143 terms (+20 new terms)
+- Priority 5 Batch 2: 10/10 files complete ✓
+- Glossary expanded from 143 to 163 terms (+20 new terms)

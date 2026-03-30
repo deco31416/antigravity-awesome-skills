@@ -1,9 +1,9 @@
 {
   "metadata": {
-    "version": "1.0.12",
+    "version": "1.0.13",
     "created": "2026-03-27",
     "last_updated": "2026-03-27",
-    "total_terms": 143
+    "total_terms": 163
   },
   "terms": {
     "skills": {
@@ -920,6 +920,96 @@
       "translation": "分布",
       "context": "How items are spread across categories",
       "examples": ["category distribution", "skill distribution"]
+    },
+    "triage": {
+      "translation": "分类",
+      "context": "Security issue classification and prioritization",
+      "examples": ["security findings triage", "triage process"]
+    },
+    "findings": {
+      "translation": "发现",
+      "context": "Security findings or audit results",
+      "examples": ["security findings", "triage findings"]
+    },
+    "baseline": {
+      "translation": "基准",
+      "context": "Reference point or baseline for comparison",
+      "examples": ["baseline commit", "establish baseline"]
+    },
+    "ground truth": {
+      "translation": "真实依据",
+      "context": "Verified or authoritative source of truth",
+      "examples": ["not ground truth", "verify ground truth"]
+    },
+    "remediation": {
+      "translation": "修复",
+      "context": "Security remediation actions",
+      "examples": ["remediation buckets", "vulnerability remediation"]
+    },
+    "bucket": {
+      "translation": "分类",
+      "context": "Grouping or categorization of issues",
+      "examples": ["remediation buckets", "issue buckets"]
+    },
+    "exploitable": {
+      "translation": "可利用",
+      "context": "Vulnerability that can be exploited",
+      "examples": ["exploitable vulnerability", "still present and exploitable"]
+    },
+    "obsolete": {
+      "translation": "过时",
+      "context": "No longer applicable or reproducible",
+      "examples": ["obsolete finding", "obsolete on current HEAD"]
+    },
+    "reproducible": {
+      "translation": "可复现",
+      "context": "Can be reproduced or demonstrated",
+      "examples": ["not reproducible", "reproducible vulnerability"]
+    },
+    "duplicate": {
+      "translation": "重复",
+      "context": "Duplicate of another finding",
+      "examples": ["duplicate finding", "duplicate of another issue"]
+    },
+    "delimiter": {
+      "translation": "分隔符",
+      "context": "YAML or data format delimiter",
+      "examples": ["frontmatter delimiter", "delimiter token"]
+    },
+    "sanitization": {
+      "translation": "过滤",
+      "context": "Input sanitization or cleaning",
+      "examples": ["unsanitized input", "sanitize filenames"]
+    },
+    "dereference": {
+      "translation": "解引用",
+      "context": "Follow or resolve symlinks",
+      "examples": ["dereference symlinks", "symbolic link dereference"]
+    },
+    "exfiltration": {
+      "translation": "泄露",
+      "context": "Unauthorized data export or leakage",
+      "examples": ["file exfiltration", "data exfiltration"]
+    },
+    "bytecode": {
+      "translation": "字节码",
+      "context": "Compiled Python bytecode",
+      "examples": ["Python bytecode", "tracked bytecode artifacts"]
+    },
+    "pyc": {
+      "translation": "pyc",
+      "context": "Python bytecode file extension - keep as .pyc",
+      "examples": [".pyc files", "bytecode compilation"]
+    },
+    "suppress": {
+      "translation": "抑制",
+      "context": "Suppress warnings or errors",
+      "examples": ["suppress warnings", "error suppression"]
+    },
+    "adversarial": {
+      "translation": "对抗性",
+      "context": "Malicious or attacking actor",
+      "examples": ["adversarial input", "adversarial conditions"]
     }
   }
 }
