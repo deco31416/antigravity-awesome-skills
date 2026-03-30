@@ -1,9 +1,9 @@
 {
   "metadata": {
-    "version": "1.0.3",
+    "version": "1.0.4",
     "created": "2026-03-27",
     "last_updated": "2026-03-27",
-    "total_terms": 46
+    "total_terms": 52
   },
   "terms": {
     "skills": {
@@ -275,6 +275,36 @@
       "translation": "规范",
       "context": "Specification document",
       "examples": ["technical spec", "API spec"]
+    },
+    "prompt": {
+      "translation": "提示词",
+      "context": "AI prompt or instruction",
+      "examples": ["write a prompt", "prompt engineering"]
+    },
+    "context": {
+      "translation": "上下文",
+      "context": "Conversation context or background information",
+      "examples": ["provide context", "context window"]
+    },
+    "invoke": {
+      "translation": "调用",
+      "context": "Call or trigger a skill",
+      "examples": ["invoke a skill", "skill invocation"]
+    },
+    "syntax": {
+      "translation": "语法",
+      "context": "Command or code syntax",
+      "examples": ["skill syntax", "correct syntax"]
+    },
+    "frontmatter": {
+      "translation": "前置元数据",
+      "context": "YAML metadata at top of markdown files",
+      "examples": ["SKILL.md frontmatter", "frontmatter fields"]
+    },
+    "toolbox": {
+      "translation": "工具箱",
+      "context": "Collection of tools or skills",
+      "examples": ["skills toolbox", "toolbox analogy"]
     }
   }
 }

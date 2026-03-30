@@ -6,17 +6,17 @@
 ## Summary
 
 - **Total Files:** 68
-- **Completed:** 2
+- **Completed:** 4
 - **In Progress:** 0
-- **Remaining:** 66
+- **Remaining:** 64
 
 ## Progress by Priority
 
 ### Priority 1: Core Documentation (4 files)
 - [x] README.md
 - [x] users/getting-started.md
-- [ ] users/usage.md
-- [ ] users/faq.md
+- [x] users/usage.md
+- [x] users/faq.md
 
 ### Priority 2: CLI Integration Guides (4 files)
 - [ ] users/claude-code-skills.md
@@ -92,13 +92,13 @@
 
 ## Glossary Statistics
 
-- **Total Terms:** 46
+- **Total Terms:** 52
 - **Last Updated:** 2026-03-27
 - **Glossary File:** `.glossary.json`
 
 ## Batch Progress
 
-- **Batch 1 (Priority 1):** In progress - 2/4 files
+- **Batch 1 (Priority 1):** Complete - 4/4 files ✓
 - **Batch 2 (Priority 2):** Not started - 0/4 files
 - **Batch 3 (Priority 3):** Not started - 0/17 files
 - **Batch 4 (Priority 4):** Not started - 0/6 files
@@ -110,3 +110,5 @@
 - Each batch is validated before proceeding to the next
 - Glossary is built incrementally with each batch
 - Files are checked for broken links and glossary consistency
+- Priority 1 core documentation is now complete ✓
+- Foundation glossary locked at 52 terms
