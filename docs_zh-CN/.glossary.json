@@ -1,9 +1,9 @@
 {
   "metadata": {
-    "version": "1.0.7",
+    "version": "1.0.8",
     "created": "2026-03-27",
     "last_updated": "2026-03-27",
-    "total_terms": 75
+    "total_terms": 85
   },
   "terms": {
     "skills": {
@@ -490,6 +490,51 @@
       "translation": "轨迹",
       "context": "Agent trajectory or execution path",
       "examples": ["trajectory conversion", "agent trajectory"]
+    },
+    "truncation crash loop": {
+      "translation": "截断崩溃循环",
+      "context": "Restart loop caused by context truncation errors",
+      "examples": ["truncation crash loop on Windows", "crash loop recovery"]
+    },
+    "restart loop": {
+      "translation": "重启循环",
+      "context": "Application repeatedly crashes and restarts",
+      "examples": ["stuck in restart loop", "restart loop error"]
+    },
+    "database": {
+      "translation": "数据库",
+      "context": "Data storage system",
+      "examples": ["browser database", "delete database folders"]
+    },
+    "backup": {
+      "translation": "备份",
+      "context": "Data backup or backup folder",
+      "examples": ["back up these folders", "emergency backup"]
+    },
+    "crash": {
+      "translation": "崩溃",
+      "context": "Application crash or failure",
+      "examples": ["app crashes", "crash immediately"]
+    },
+    "session": {
+      "translation": "会话",
+      "context": "User session or conversation session",
+      "examples": ["broken session", "resume session"]
+    },
+    "cleanup": {
+      "translation": "清理",
+      "context": "Clean up files or data",
+      "examples": ["recovery cleanup", "cleanup completed"]
+    },
+    "recovery": {
+      "translation": "恢复",
+      "context": "System or data recovery",
+      "examples": ["recovery steps", "disaster recovery"]
+    },
+    "repair": {
+      "translation": "修复",
+      "context": "Repair or fix something broken",
+      "examples": ["repair tool", "start the repair"]
     }
   }
 }
