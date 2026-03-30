@@ -1,9 +1,9 @@
 {
   "metadata": {
-    "version": "1.0.2",
+    "version": "1.0.3",
     "created": "2026-03-27",
     "last_updated": "2026-03-27",
-    "total_terms": 37
+    "total_terms": 46
   },
   "terms": {
     "skills": {
@@ -190,6 +190,91 @@
       "translation": "剧本",
       "context": "Step-by-step execution guide or instructions",
       "examples": ["SKILL.md playbook", "workflow playbook", "execution playbook"]
+    },
+    "persona": {
+      "translation": "角色",
+      "context": "User role or character type",
+      "examples": ["developer persona", "select your persona"]
+    },
+    "wizard": {
+      "translation": "向导",
+      "context": "Guided tool or assistant",
+      "examples": ["Web Wizard", "setup wizard"]
+    },
+    "starter pack": {
+      "translation": "入门包",
+      "context": "Curated collection for beginners",
+      "examples": ["starter packs", "web wizard starter pack"]
+    },
+    "clone": {
+      "translation": "克隆",
+      "context": "Git clone operation",
+      "examples": ["clone the repository", "git clone"]
+    },
+    "endpoint": {
+      "translation": "端点",
+      "context": "API endpoint",
+      "examples": ["API endpoints", "REST endpoint"]
+    },
+    "audit": {
+      "translation": "审计",
+      "context": "Security or code audit",
+      "examples": ["security audit", "code audit"]
+    },
+    "lint": {
+      "translation": "代码检查",
+      "context": "Code linting process",
+      "examples": ["lint rules", "lint and validate"]
+    },
+    "validate": {
+      "translation": "验证",
+      "context": "Validation process",
+      "examples": ["validate input", "lint and validate"]
+    },
+    "workspace": {
+      "translation": "工作区",
+      "context": "Development workspace",
+      "examples": ["workspace directory", "global vs workspace"]
+    },
+    "global": {
+      "translation": "全局",
+      "context": "Global configuration or scope",
+      "examples": ["global settings", "global path"]
+    },
+    "native": {
+      "translation": "原生",
+      "context": "Native support or integration",
+      "examples": ["native support", "native integration"]
+    },
+    "manual": {
+      "translation": "手动",
+      "context": "Manual operation",
+      "examples": ["manual copy-paste", "manual setup"]
+    },
+    "official": {
+      "translation": "官方",
+      "context": "Official or vendor-maintained",
+      "examples": ["official skills", "official support"]
+    },
+    "vendor": {
+      "translation": "供应商",
+      "context": "Software vendor or provider",
+      "examples": ["vendor tools", "third-party vendor"]
+    },
+    "risk": {
+      "translation": "风险",
+      "context": "Risk level or category",
+      "examples": ["risk skills", "security risk"]
+    },
+    "authorized": {
+      "translation": "授权",
+      "context": "Authorized use only",
+      "examples": ["authorized use", "unauthorized access"]
+    },
+    "spec": {
+      "translation": "规范",
+      "context": "Specification document",
+      "examples": ["technical spec", "API spec"]
     }
   }
 }
